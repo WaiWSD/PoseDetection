@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "PoseDetection",
+    "name": "PoseDetect",
     "slug": "PoseDetection",
     "version": "0.0.1",
     "orientation": "portrait",
@@ -18,13 +18,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.midbot.posedetect",
+      "buildNumber": "1.1.0",
+      "infoPlist": {
+        "NSCameraUsageDescription": "In order to share your workspace photos we need access your camera."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#FFFFFF",
+        "package": "com.midbot.posedetect",
+        "versionCode": 1,
+        "permissions": []
+      },
+      "package": "com.midbot.posedetect"
     },
     "web": {
       "favicon": "./assets/favicon.png"
