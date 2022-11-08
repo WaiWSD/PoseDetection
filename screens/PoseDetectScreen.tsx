@@ -150,7 +150,7 @@ const PoseDetectScreen: React.FC = () => {
                 })();
             }
         } catch (err) {
-            console.log("App.js useEffect initialising error", err);
+            console.log("PoseDetectScreen useEffect initialising error", err);
         }
 
     }, []);
@@ -213,54 +213,62 @@ const PoseDetectScreen: React.FC = () => {
     // In this case, we use topk set to 1 as we are interested in the higest result for
     // both performance and simplicity. This means the array will return 1 prediction only!
     //----------------------------------------------------------------------------------------
-    const getPrediction = async (tensor) => {
+    const getPrediction = async (tensor: any) => {
         if (!tensor) { return; }
-
+        if (mobilenetModel.estimatePoses == null) { 
+            console.log("PoseDetectScreen getPrediction estimatePoses is null");
+            return; 
+        }
         // //topk set to 1, if use mobilenet
         // const prediction = await mobilenetModel.classify(tensor, 1);
+        try {
 
-        // if use poseDetection
-        const poses = await mobilenetModel.estimatePoses(tensor);
-        if (poses.length > 0) {
+            // if use poseDetection
+            const poses = await mobilenetModel.estimatePoses(tensor);
+            if (poses.length > 0) {
 
-            const poseOne = poses[0]
-            // console.log(`poses prediction: ${JSON.stringify(poseOne)}`);
+                const poseOne = poses[0]
+                // console.log(`poses prediction: ${JSON.stringify(poseOne)}`);
 
-            if (poseOne.score > 0.2) {
+                if (poseOne.score > 0.2) {
 
-                const poseCopy = {
-                    nose: { x: 0, y: 0 },
-                    left_eye: { x: 0, y: 0 },
-                    right_eye: { x: 0, y: 0 },
-                    left_ear: { x: 0, y: 0 },
-                    right_ear: { x: 0, y: 0 },
-                    left_shoulder: { x: 0, y: 0 },
-                    right_shoulder: { x: 0, y: 0 },
-                    left_elbow: { x: 0, y: 0 },
-                    right_elbow: { x: 0, y: 0 },
-                    left_wrist: { x: 0, y: 0 },
-                    right_wrist: { x: 0, y: 0 },
-                    left_hip: { x: 0, y: 0 },
-                    right_hip: { x: 0, y: 0 },
-                    left_knee: { x: 0, y: 0 },
-                    right_knee: { x: 0, y: 0 },
-                    left_ankle: { x: 0, y: 0 },
-                    right_ankle: { x: 0, y: 0 },
-                };
+                    const poseCopy = {
+                        nose: { x: 0, y: 0 },
+                        left_eye: { x: 0, y: 0 },
+                        right_eye: { x: 0, y: 0 },
+                        left_ear: { x: 0, y: 0 },
+                        right_ear: { x: 0, y: 0 },
+                        left_shoulder: { x: 0, y: 0 },
+                        right_shoulder: { x: 0, y: 0 },
+                        left_elbow: { x: 0, y: 0 },
+                        right_elbow: { x: 0, y: 0 },
+                        left_wrist: { x: 0, y: 0 },
+                        right_wrist: { x: 0, y: 0 },
+                        left_hip: { x: 0, y: 0 },
+                        right_hip: { x: 0, y: 0 },
+                        left_knee: { x: 0, y: 0 },
+                        right_knee: { x: 0, y: 0 },
+                        left_ankle: { x: 0, y: 0 },
+                        right_ankle: { x: 0, y: 0 },
+                    };
 
-                for (let i = 0; i < poseOne.keypoints.length; i++) {
-                    poseCopy[poseOne.keypoints[i].name].x = cameraWidth - poseOne.keypoints[i].x * (cameraWidth / tensorDims.width);
-                    poseCopy[poseOne.keypoints[i].name].y = poseOne.keypoints[i].y * (cameraHeight / tensorDims.height);
+                    for (let i = 0; i < poseOne.keypoints.length; i++) {
+                        poseCopy[poseOne.keypoints[i].name].x = cameraWidth - poseOne.keypoints[i].x * (cameraWidth / tensorDims.width);
+                        poseCopy[poseOne.keypoints[i].name].y = poseOne.keypoints[i].y * (cameraHeight / tensorDims.height);
+                    }
+
+                    // console.log(`poseCopy: ${JSON.stringify(poseCopy)}`);
+
+                    // setPostData(JSON.stringify(poseCopy));
+
+                    pose.value = poseCopy;
+
                 }
-
-                // console.log(`poseCopy: ${JSON.stringify(poseCopy)}`);
-
-                // setPostData(JSON.stringify(poseCopy));
-
-                pose.value = poseCopy;
 
             }
 
+        } catch (err) {
+            console.log("PoseDetectScreen getPrediction Error", err);
         }
 
         // Run inference and get output tensors.
@@ -300,7 +308,7 @@ const PoseDetectScreen: React.FC = () => {
         try {
             loop();
         } catch (err) {
-            console.log("App.js handleCameraStream", err);
+            console.log("PoseDetectScreen handleCameraStream", err);
         }
     }
 
@@ -342,8 +350,8 @@ const PoseDetectScreen: React.FC = () => {
                 {renderCameraView()}
                 <View style={styles.svgView}>
                     <Svg
-                        height={800 / 2}
-                        width={700 / 2}
+                        height={cameraHeight}
+                        width={cameraWidth}
                         style={styles.linesContainer}>
                         <AnimatedLine animatedProps={leftWristToElbowPosition} stroke="red" strokeWidth="2" />
                         <AnimatedLine animatedProps={leftElbowToShoulderPosition} stroke="red" strokeWidth="2" />
@@ -361,7 +369,7 @@ const PoseDetectScreen: React.FC = () => {
                 </View>
             </View>
             <Text>{poseData}</Text>
-            
+
         </View>
     );
 }
