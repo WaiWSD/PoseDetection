@@ -8,9 +8,9 @@ import { Camera } from 'expo-camera';
 
 //Tensorflow
 import * as tf from '@tensorflow/tfjs';
-import * as mobilenet from '@tensorflow-models/mobilenet';
+// import * as mobilenet from '@tensorflow-models/mobilenet';
 import * as poseDetection from '@tensorflow-models/pose-detection';
-import * as mpPose from '@mediapipe/pose';
+// import * as mpPose from '@mediapipe/pose';
 import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
 
 //SVG Animation
@@ -81,6 +81,7 @@ export default function App() {
   // Pose related variables initialising
   const pose = useSharedValue(defaultPose);
 
+  // Coordination of the lines linking body points for SVG drawing 
   const leftWristToElbowPosition = usePosition(pose, 'left_wrist', 'left_elbow');
   const leftElbowToShoulderPosition = usePosition(pose, 'left_elbow', 'left_shoulder');
   const leftShoulderToHipPosition = usePosition(pose, 'left_shoulder', 'left_hip');
@@ -103,23 +104,28 @@ export default function App() {
   // 3. Load Mobilenet Model
   //-----------------------------
   useEffect(() => {
-    if (!frameworkReady) {
-      (async () => {
-
-        //check permissions
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        console.log(`permissions status: ${status}`);
-        setHasPermission(status === 'granted');
-
-        //we must always wait for the Tensorflow API to be ready before any TF operation...
-        await tf.ready();
-
-        //load the mobilenet model and save it in state
-        setMobilenetModel(await loadMobileNetModel());
-
-        setFrameworkReady(true);
-      })();
+    try{
+      if (!frameworkReady) {
+        (async () => {
+  
+          //check permissions
+          const { status } = await Camera.requestCameraPermissionsAsync();
+          console.log(`permissions status: ${status}`);
+          setHasPermission(status === 'granted');
+  
+          //we must always wait for the Tensorflow API to be ready before any TF operation...
+          await tf.ready();
+  
+          //load the mobilenet model and save it in state
+          setMobilenetModel(await loadMobileNetModel());
+  
+          setFrameworkReady(true);
+        })();
+      }
+    } catch (err) {
+      console.log("App.js useEffect initialising error", err);
     }
+
   }, []);
 
   //--------------------------
@@ -428,29 +434,5 @@ const styles = StyleSheet.create({
     color: 'black',
     paddingRight: 30,
     backgroundColor: '#ffffff'
-  },
-});
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'grey',
-    borderRadius: 3,
-    color: 'black',
-    paddingRight: 30,
-    backgroundColor: '#cccccc'
   },
 });
