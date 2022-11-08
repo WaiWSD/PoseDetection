@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, Text, View, ScrollView, StyleSheet, Button, Platform } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Platform,
+  ViewStyle,
+  TextStyle,
+  ImageStyle,
+} from 'react-native';
 
 //Expo
 import Constants from 'expo-constants';
-import { Camera } from 'expo-camera';
+import { Camera, CameraType } from 'expo-camera';
 
 //Tensorflow
 import * as tf from '@tensorflow/tfjs';
@@ -14,15 +22,35 @@ import * as poseDetection from '@tensorflow-models/pose-detection';
 import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
 
 //SVG Animation
-import { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
+import { useSharedValue, useAnimatedStyle, SharedValue, AnimatedStyleProp } from 'react-native-reanimated';
 import Animated from 'react-native-reanimated';
 import Svg, { Line } from 'react-native-svg';
 
 //SVG Global Variables
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 
-const usePosition = (pose, valueName1, valueName2) => {
-  return useAnimatedStyle(
+type Pose = {
+  nose: { x: number, y: number },
+  left_eye: { x: number, y: number },
+  right_eye: { x: number, y: number },
+  left_ear: { x: number, y: number },
+  right_ear: { x: number, y: number },
+  left_shoulder: { x: number, y: number },
+  right_shoulder: { x: number, y: number },
+  left_elbow: { x: number, y: number },
+  right_elbow: { x: number, y: number },
+  left_wrist: { x: number, y: number },
+  right_wrist: { x: number, y: number },
+  left_hip: { x: number, y: number },
+  right_hip: { x: number, y: number },
+  left_knee: { x: number, y: number },
+  right_knee: { x: number, y: number },
+  left_ankle: { x: number, y: number },
+  right_ankle: { x: number, y: number },
+}
+
+const usePosition = (pose: SharedValue<Pose>, valueName1: string, valueName2: string) => {
+  return useAnimatedStyle<any>(
     () => ({
       x1: pose.value[valueName1].x,
       y1: pose.value[valueName1].y,
@@ -33,7 +61,7 @@ const usePosition = (pose, valueName1, valueName2) => {
   );
 };
 
-const defaultPose = {
+const defaultPose: Pose = {
   nose: { x: 0, y: 0 },
   left_eye: { x: 0, y: 0 },
   right_eye: { x: 0, y: 0 },
@@ -104,21 +132,21 @@ export default function App() {
   // 3. Load Mobilenet Model
   //-----------------------------
   useEffect(() => {
-    try{
+    try {
       if (!frameworkReady) {
         (async () => {
-  
+
           //check permissions
           const { status } = await Camera.requestCameraPermissionsAsync();
           console.log(`permissions status: ${status}`);
           setHasPermission(status === 'granted');
-  
+
           //we must always wait for the Tensorflow API to be ready before any TF operation...
           await tf.ready();
-  
+
           //load the mobilenet model and save it in state
           setMobilenetModel(await loadMobileNetModel());
-  
+
           setFrameworkReady(true);
         })();
       }
@@ -197,7 +225,7 @@ export default function App() {
     if (poses.length > 0) {
 
       const poseOne = poses[0]
-      console.log(`poses prediction: ${JSON.stringify(poseOne)}`);
+      // console.log(`poses prediction: ${JSON.stringify(poseOne)}`);
 
       if (poseOne.score > 0.2) {
 
@@ -226,9 +254,9 @@ export default function App() {
           poseCopy[poseOne.keypoints[i].name].y = poseOne.keypoints[i].y * (cameraHeight / tensorDims.height);
         }
 
-        console.log(`poseCopy: ${JSON.stringify(poseCopy)}`);
+        // console.log(`poseCopy: ${JSON.stringify(poseCopy)}`);
 
-        setPostData(JSON.stringify(poseCopy));
+        // setPostData(JSON.stringify(poseCopy));
 
         pose.value = poseCopy;
 
@@ -264,7 +292,7 @@ export default function App() {
   // More info on RAF:
   // https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
   //------------------------------------------------------------------------------
-  const handleCameraStream = (imageAsTensors) => {
+  const handleCameraStream = (imageAsTensors: IterableIterator<tf.Tensor3D>) => {
     const loop = async () => {
       const nextImageTensor = await imageAsTensors.next().value;
       await getPrediction(nextImageTensor);
@@ -290,7 +318,7 @@ export default function App() {
     return <View style={styles.cameraView}>
       <TensorCamera
         style={styles.camera}
-        type={Camera.Constants.Type.back}
+        type={CameraType.back}
         zoom={0}
         cameraTextureHeight={textureDims.height}
         cameraTextureWidth={textureDims.width}
@@ -299,6 +327,7 @@ export default function App() {
         resizeDepth={3}
         onReady={(imageAsTensors) => handleCameraStream(imageAsTensors)}
         autorender={true}
+        useCustomShadersToResize={false}
       />
     </View>;
   }
