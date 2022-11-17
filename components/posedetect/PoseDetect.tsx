@@ -162,7 +162,9 @@ const PoseDetectScreen: React.FC = () => {
     //--------------------------
     useEffect(() => {
         return () => {
-            cancelAnimationFrame(requestAnimationFrameId);
+            if (frameworkReady) {
+                cancelAnimationFrame(requestAnimationFrameId);
+            }
         };
     }, [requestAnimationFrameId]);
 
@@ -215,9 +217,9 @@ const PoseDetectScreen: React.FC = () => {
     //----------------------------------------------------------------------------------------
     const getPrediction = async (tensor: any) => {
         if (!tensor) { return; }
-        if (mobilenetModel.estimatePoses == null) { 
+        if (mobilenetModel.estimatePoses == null) {
             console.log("PoseDetectScreen getPrediction estimatePoses is null");
-            return; 
+            return;
         }
         // //topk set to 1, if use mobilenet
         // const prediction = await mobilenetModel.classify(tensor, 1);
@@ -306,7 +308,9 @@ const PoseDetectScreen: React.FC = () => {
             requestAnimationFrameId = requestAnimationFrame(loop);
         };
         try {
-            loop();
+            if (frameworkReady){
+                loop();
+            }
         } catch (err) {
             console.log("PoseDetectScreen handleCameraStream", err);
         }

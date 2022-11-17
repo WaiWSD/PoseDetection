@@ -5,7 +5,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import PoseDetectScreen from './screens/PoseDetectScreen';
+import PoseDetectScreen from './screens/main/PoseDetectScreen';
 
 export default function App() {
   return (
