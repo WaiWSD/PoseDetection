@@ -28,7 +28,7 @@ import Svg, { Line } from 'react-native-svg';
 //SVG Global Variables
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 
-type Pose = {
+export type Pose = {
     nose: { x: number, y: number },
     left_eye: { x: number, y: number },
     right_eye: { x: number, y: number },
@@ -84,7 +84,9 @@ const defaultPose: Pose = {
 const cameraWidth = 350;
 const cameraHeight = 400;
 
-const PoseDetectScreen: React.FC = () => {
+const PoseDetect: React.FC<{ onPoseDetected: (pose: Pose) => void }> = ({
+    onPoseDetected
+}) => {
     //------------------------------------------------
     //state variables for image/translation processing
     //------------------------------------------------
@@ -166,7 +168,7 @@ const PoseDetectScreen: React.FC = () => {
                 cancelAnimationFrame(requestAnimationFrameId);
             }
         };
-    }, [requestAnimationFrameId]);
+    }, [requestAnimationFrameId, frameworkReady]);
 
     //-----------------------------------------------------------------
     // Loads the mobilenet Tensorflow model: 
@@ -232,27 +234,27 @@ const PoseDetectScreen: React.FC = () => {
                 const poseOne = poses[0]
                 // console.log(`poses prediction: ${JSON.stringify(poseOne)}`);
 
-                if (poseOne.score > 0.2) {
+                const poseCopy: Pose = {
+                    nose: { x: 0, y: 0 },
+                    left_eye: { x: 0, y: 0 },
+                    right_eye: { x: 0, y: 0 },
+                    left_ear: { x: 0, y: 0 },
+                    right_ear: { x: 0, y: 0 },
+                    left_shoulder: { x: 0, y: 0 },
+                    right_shoulder: { x: 0, y: 0 },
+                    left_elbow: { x: 0, y: 0 },
+                    right_elbow: { x: 0, y: 0 },
+                    left_wrist: { x: 0, y: 0 },
+                    right_wrist: { x: 0, y: 0 },
+                    left_hip: { x: 0, y: 0 },
+                    right_hip: { x: 0, y: 0 },
+                    left_knee: { x: 0, y: 0 },
+                    right_knee: { x: 0, y: 0 },
+                    left_ankle: { x: 0, y: 0 },
+                    right_ankle: { x: 0, y: 0 },
+                };
 
-                    const poseCopy = {
-                        nose: { x: 0, y: 0 },
-                        left_eye: { x: 0, y: 0 },
-                        right_eye: { x: 0, y: 0 },
-                        left_ear: { x: 0, y: 0 },
-                        right_ear: { x: 0, y: 0 },
-                        left_shoulder: { x: 0, y: 0 },
-                        right_shoulder: { x: 0, y: 0 },
-                        left_elbow: { x: 0, y: 0 },
-                        right_elbow: { x: 0, y: 0 },
-                        left_wrist: { x: 0, y: 0 },
-                        right_wrist: { x: 0, y: 0 },
-                        left_hip: { x: 0, y: 0 },
-                        right_hip: { x: 0, y: 0 },
-                        left_knee: { x: 0, y: 0 },
-                        right_knee: { x: 0, y: 0 },
-                        left_ankle: { x: 0, y: 0 },
-                        right_ankle: { x: 0, y: 0 },
-                    };
+                if (poseOne.score > 0.2) {
 
                     for (let i = 0; i < poseOne.keypoints.length; i++) {
                         poseCopy[poseOne.keypoints[i].name].x = cameraWidth - poseOne.keypoints[i].x * (cameraWidth / tensorDims.width);
@@ -260,11 +262,14 @@ const PoseDetectScreen: React.FC = () => {
                     }
 
                     // console.log(`poseCopy: ${JSON.stringify(poseCopy)}`);
+                    onPoseDetected(poseCopy);
 
                     // setPostData(JSON.stringify(poseCopy));
 
                     pose.value = poseCopy;
 
+                } else {
+                    pose.value = poseCopy;
                 }
 
             }
@@ -308,7 +313,7 @@ const PoseDetectScreen: React.FC = () => {
             requestAnimationFrameId = requestAnimationFrame(loop);
         };
         try {
-            if (frameworkReady){
+            if (frameworkReady) {
                 loop();
             }
         } catch (err) {
@@ -344,65 +349,40 @@ const PoseDetectScreen: React.FC = () => {
     }
 
     return (
-        <View style={styles.container}>
-            {/* <View style={styles.header}>
-        <Text style={styles.title}>
-          Pose Detection
-        </Text>
-      </View> */}
-            <View style={styles.body}>
-                {renderCameraView()}
-                <View style={styles.svgView}>
-                    <Svg
-                        height={cameraHeight}
-                        width={cameraWidth}
-                        style={styles.linesContainer}>
-                        <AnimatedLine animatedProps={leftWristToElbowPosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={leftElbowToShoulderPosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={leftShoulderToHipPosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={leftHipToKneePosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={leftKneeToAnklePosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={rightWristToElbowPosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={rightElbowToShoulderPosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={rightShoulderToHipPosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={rightHipToKneePosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={rightKneeToAnklePosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={shoulderToShoulderPosition} stroke="red" strokeWidth="2" />
-                        <AnimatedLine animatedProps={hipToHipPosition} stroke="red" strokeWidth="2" />
-                    </Svg>
-                </View>
+        <View style={styles.body}>
+            {renderCameraView()}
+            <View style={styles.svgView}>
+                <Svg
+                    height={cameraHeight}
+                    width={cameraWidth}
+                    style={styles.linesContainer}>
+                    <AnimatedLine animatedProps={leftWristToElbowPosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={leftElbowToShoulderPosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={leftShoulderToHipPosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={leftHipToKneePosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={leftKneeToAnklePosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={rightWristToElbowPosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={rightElbowToShoulderPosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={rightShoulderToHipPosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={rightHipToKneePosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={rightKneeToAnklePosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={shoulderToShoulderPosition} stroke="red" strokeWidth="2" />
+                    <AnimatedLine animatedProps={hipToHipPosition} stroke="red" strokeWidth="2" />
+                </Svg>
             </View>
-            <Text>{poseData}</Text>
-
         </View>
     );
 }
 
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'flex-start',
-        paddingTop: Constants.statusBarHeight,
-        backgroundColor: '#E8E8E8',
-    },
-    header: {
-        backgroundColor: '#41005d'
-    },
-    title: {
-        margin: 10,
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        color: '#ffffff'
-    },
     body: {
         // padding: 5,
         // paddingTop: 25,
-        backgroundColor: 'white',
-        flex: 1,
-        width: '100%',
-        height: '100%',
+        backgroundColor: 'green',
+        // flex: 1,
+        width: cameraWidth,
+        height: cameraHeight,
     },
     cameraView: {
         // display: 'flex',
@@ -442,40 +422,6 @@ const styles = StyleSheet.create({
         zIndex: 0.1,
         // backgroundColor: 'green',
     },
-    translationView: {
-        marginTop: 30,
-        padding: 20,
-        borderColor: '#cccccc',
-        borderWidth: 1,
-        borderStyle: 'solid',
-        backgroundColor: '#ffffff',
-        marginHorizontal: 20,
-        height: 500
-    },
-    translationTextField: {
-        fontSize: 60
-    },
-    wordTextField: {
-        textAlign: 'right',
-        fontSize: 20,
-        marginBottom: 50
-    },
-    legendTextField: {
-        fontStyle: 'italic',
-        color: '#888888'
-    },
-    inputAndroid: {
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderWidth: 1,
-        borderColor: 'purple',
-        borderStyle: 'solid',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30,
-        backgroundColor: '#ffffff'
-    },
 });
 
-export default PoseDetectScreen;
+export default PoseDetect;
