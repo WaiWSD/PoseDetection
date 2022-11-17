@@ -2,6 +2,7 @@
   "expo": {
     "name": "PoseDetect",
     "slug": "PoseDetection",
+    "owner": "waiwongstringdynamic",
     "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,12 +29,11 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF",
-        "package": "com.midbot.posedetect",
-        "versionCode": 1,
-        "permissions": []
+        "backgroundColor": "#FFFFFF"
       },
-      "package": "com.midbot.posedetect"
+      "package": "com.midbot.posedetect",
+      "versionCode": 1,
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"
