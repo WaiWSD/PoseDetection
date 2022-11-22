@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Text,
     View,
@@ -18,16 +18,20 @@ import PoseDetect, { Pose } from '../../components/posedetect/PoseDetect';
 
 const PoseDetectScreen: React.FC = () => {
 
-    const [score, setScore] = useState<Number>(0);
+    const [score, setScore] = useState<number>(0);
+    // const score = useRef<number>(0);
 
     const onPoseDetected = (pose: Pose) => {
 
         // console.log(`pose: ${JSON.stringify(pose)}`);
     }
 
-    const onScoreUpdate = (tempScore: Number) => {
-        console.log('PoseDetectScreen onScoreUpdate score', score);
-        setScore(tempScore);
+    const onScoreUpdate = (tempScore: number) => {
+        console.log('PoseDetectScreen onScoreUpdate score', tempScore);
+        setScore(prevValue=>tempScore+prevValue);
+        // const tempOriginalScore = score.current;
+        console.log('PoseDetectScreen onScoreUpdate tempOriginalScore', score);
+        // score.current = score.current + tempScore;
     }
 
     return (
@@ -36,7 +40,7 @@ const PoseDetectScreen: React.FC = () => {
                 onPoseDetected={onPoseDetected}
                 onScoreUpdate={onScoreUpdate}
             />
-            <Text>{score.toString()}</Text>
+            <Text>{`${score}`}</Text>
         </View>
     );
 }

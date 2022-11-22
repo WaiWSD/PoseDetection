@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     StyleSheet,
@@ -88,7 +88,7 @@ const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
 
 const PoseDetect: React.FC<{
     onPoseDetected: (pose: Pose) => void,
-    onScoreUpdate: (score: Number) => void
+    onScoreUpdate: (score: number) => void
 }> = ({
     onPoseDetected,
     onScoreUpdate
@@ -133,21 +133,18 @@ const PoseDetect: React.FC<{
         const hipToHipPosition = usePosition(pose, 'left_hip', 'right_hip');
 
         // Apple position
-        const [appleCoor, setAppleCoor] = useState<AppleCoor>({ x: 0, y: 0 });
+        // const [appleCoor, setAppleCoor] = useState<AppleCoor>({ x: 0, y: 0 });
+        const appleCoor = useRef<AppleCoor>({ x: 0, y: 0 });
 
         // Score of game
         const [score, setScore] = useState<number>(0);
 
         // Apple position listener
         const onAppleCoorUpdate = (tempAppleCoor: AppleCoor) => {
-            console.log("PoseDetect onAppleCoorUpdate appleCoor", tempAppleCoor);
+            // console.log("PoseDetect onAppleCoorUpdate appleCoor", tempAppleCoor);
             // setAppleCoor(tempAppleCoor);
+            appleCoor.current = tempAppleCoor
         }
-
-        useEffect(() => {
-            console.log("PoseDetect useEffect score");
-            onScoreUpdate(score);
-        }, []);
 
         //-----------------------------
         // Run effect once
@@ -289,14 +286,16 @@ const PoseDetect: React.FC<{
 
                         // setPostData(JSON.stringify(poseCopy));
 
-                        if (appleCoor.x !== 0 && appleCoor.y !== 0) {
-                            if (poseCopy.left_wrist.x - 40 <= appleCoor.x && poseCopy.left_wrist.x + 40 >= appleCoor.x) {
+                        if (appleCoor.current.x !== 0 && appleCoor.current.y !== 0) {
+                            if (poseCopy.left_wrist.x - 40 <= appleCoor.current.x && poseCopy.left_wrist.x + 40 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
-                                setScore(prevValue => ++prevValue);
+                                // setScore(prevValue => ++prevValue);
+                                onScoreUpdate(1);
                             }
-                            if (poseCopy.right_wrist.x - 40 <= appleCoor.x && poseCopy.right_wrist.x + 40 >= appleCoor.x) {
+                            if (poseCopy.right_wrist.x - 40 <= appleCoor.current.x && poseCopy.right_wrist.x + 40 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
-                                setScore(prevValue => ++prevValue);
+                                // setScore(prevValue => ++prevValue);
+                                onScoreUpdate(1);
                             }
                         }
 
