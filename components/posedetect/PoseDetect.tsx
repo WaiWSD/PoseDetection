@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
     View,
     StyleSheet,
@@ -23,6 +23,9 @@ import Svg, { Line, Path, SvgUri } from 'react-native-svg';
 
 //SVG Frame
 import AppleSvgFrame, { AppleCoor } from '../svg/AppleSvgFrame';
+
+// React useContext
+import { ScoreContext } from '../../store/score-context';
 
 //SVG Global Variables
 const AnimatedLine = Animated.createAnimatedComponent(Line);
@@ -138,6 +141,7 @@ const PoseDetect: React.FC<{
 
         // Score of game
         const [score, setScore] = useState<number>(0);
+        const scoreCtx = useContext(ScoreContext);
 
         // Apple position listener
         const onAppleCoorUpdate = (tempAppleCoor: AppleCoor) => {
@@ -290,12 +294,14 @@ const PoseDetect: React.FC<{
                             if (poseCopy.left_wrist.x - 40 <= appleCoor.current.x && poseCopy.left_wrist.x + 40 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
-                                onScoreUpdate(1);
+                                // onScoreUpdate(1);
+                                // scoreCtx.addScore(1);
                             }
                             if (poseCopy.right_wrist.x - 40 <= appleCoor.current.x && poseCopy.right_wrist.x + 40 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
-                                onScoreUpdate(1);
+                                // onScoreUpdate(1);
+                                // scoreCtx.addScore(1);
                             }
                         }
 

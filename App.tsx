@@ -7,12 +7,16 @@ import {
 
 import PoseDetectScreen from './screens/main/PoseDetectScreen';
 
+import ScoreContextProvider from './store/score-context';
+
 export default function App() {
   return (
-    <View style={styles.container}>
-      <PoseDetectScreen />
-      <StatusBar style="auto" />
-    </View>
+    <ScoreContextProvider>
+      <View style={styles.container}>
+        <PoseDetectScreen />
+        <StatusBar style="auto" />
+      </View>
+    </ScoreContextProvider>
   );
 }
 
