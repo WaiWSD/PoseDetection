@@ -203,7 +203,7 @@ const PoseDetect: React.FC<{
                                 onScoreUpdate(1);
                                 // scoreCtx.addScore(1);
                                 // score.current = score.current + 1;
-                                // setShouldUpdate(prevValue=>++prevValue);
+                                setShouldUpdate(prevValue=>++prevValue);
                             }
                             if (poseCopy.right_wrist.x - 40 <= appleCoor.current.x && poseCopy.right_wrist.x + 40 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
@@ -211,7 +211,7 @@ const PoseDetect: React.FC<{
                                 onScoreUpdate(1);
                                 // scoreCtx.addScore(1);
                                 // score.current = score.current + 1;
-                                // setShouldUpdate(prevValue=>++prevValue);
+                                setShouldUpdate(prevValue=>++prevValue);
                             }
                         }
 
@@ -250,9 +250,9 @@ const PoseDetect: React.FC<{
 
         return (
             <View style={styles.body}>
-                <TFCamera
+                {useMemo(() => <TFCamera
                     getPrediction={getPrediction}
-                />
+                />, [])}
                 <View style={styles.svgView}>
                     <Svg
                         height={cameraHeight}

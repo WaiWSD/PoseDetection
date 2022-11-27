@@ -26,7 +26,8 @@ const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
 export type AppleCoor = { x: number, y: number };
 
 const AppleSvgFrame: React.FC<{ onAppleCoorUpdate: (appleCoor: AppleCoor) => void, updateNumber: number }> = ({
-    onAppleCoorUpdate
+    onAppleCoorUpdate,
+    updateNumber
 }) => {
 
     // Apple position
@@ -44,20 +45,22 @@ const AppleSvgFrame: React.FC<{ onAppleCoorUpdate: (appleCoor: AppleCoor) => voi
         function getRandomInt(max: any) {
             return Math.floor(Math.random() * max);
         }
+        setAppleCoor(
+            { x: getRandomInt(cameraWidth - 30), y: getRandomInt(cameraHeight - 31) }
+        )
         const timerId = setInterval(
             () => {
-                const tempCoor = { x: getRandomInt(cameraWidth - 30), y: getRandomInt(cameraHeight - 31) };
                 // // console.log("PoseDetect useEffect tempCoor", tempCoor);
                 // // console.log("PoseDetect useEffect cameraWidth", {x: cameraWidth, y: cameraHeight});
                 setAppleCoor(
-                    tempCoor
+                    { x: getRandomInt(cameraWidth - 30), y: getRandomInt(cameraHeight - 31) }
                 )
             }
             , 5000);
         return function cleanup() {
             clearInterval(timerId);
         };
-    }, []);
+    }, [updateNumber]);
 
     useEffect(() => {
         onAppleCoorUpdate(appleCoor);
