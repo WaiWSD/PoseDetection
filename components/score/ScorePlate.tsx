@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     View,
     StyleSheet,
@@ -6,15 +6,22 @@ import {
 } from 'react-native';
 
 // React useContext
-import { ScoreContext } from '../../store/score-context';
+// import { ScoreContext } from '../../store/score-context';
 
-const ScorePlate: React.FC = () => {
+const ScorePlate: React.FC<{ score: number }> = ({ score }) => {
 
-    const scoreCtx = useContext(ScoreContext);
+    // const scoreCtx = useContext(ScoreContext);
+    const [_score, set_score] = useState<number>(0);
+    console.log("ScorePlate score", score);
+
+    useEffect(() => {
+        set_score(score);
+    }, [score]);
 
     return (
         <View style={styles.container}>
-            <Text>{`${scoreCtx.Score}`}</Text>
+            {/* <Text>{`${scoreCtx.Score}`}</Text> */}
+            <Text>{`${_score}`}</Text>
         </View>
     );
 }

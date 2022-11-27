@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
 import {
     View,
     StyleSheet,
     Platform,
     Dimensions,
+    Text
 } from 'react-native';
 
 //Expo
@@ -26,6 +27,7 @@ import AppleSvgFrame, { AppleCoor } from '../svg/AppleSvgFrame';
 
 // React useContext
 import { ScoreContext } from '../../store/score-context';
+import ScorePlate from '../score/ScorePlate';
 
 //SVG Global Variables
 const AnimatedLine = Animated.createAnimatedComponent(Line);
@@ -140,8 +142,8 @@ const PoseDetect: React.FC<{
         const appleCoor = useRef<AppleCoor>({ x: 0, y: 0 });
 
         // Score of game
-        const [score, setScore] = useState<number>(0);
-        const scoreCtx = useContext(ScoreContext);
+        // const [score, setScore] = useState<number>(0);
+        // const scoreCtx = useContext(ScoreContext);
 
         // Apple position listener
         const onAppleCoorUpdate = (tempAppleCoor: AppleCoor) => {
@@ -294,14 +296,16 @@ const PoseDetect: React.FC<{
                             if (poseCopy.left_wrist.x - 40 <= appleCoor.current.x && poseCopy.left_wrist.x + 40 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
-                                // onScoreUpdate(1);
+                                onScoreUpdate(1);
                                 // scoreCtx.addScore(1);
+                                // score.current = score.current + 1;
                             }
                             if (poseCopy.right_wrist.x - 40 <= appleCoor.current.x && poseCopy.right_wrist.x + 40 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
-                                // onScoreUpdate(1);
+                                onScoreUpdate(1);
                                 // scoreCtx.addScore(1);
+                                // score.current = score.current + 1;
                             }
                         }
 
@@ -384,7 +388,22 @@ const PoseDetect: React.FC<{
                     autorender={true}
                     useCustomShadersToResize={false}
                 />
-            </View>;
+            </View>
+            // return (useMemo(() => <View style={styles.cameraView}>
+            //     <TensorCamera
+            //         style={styles.camera}
+            //         type={CameraType.back}
+            //         zoom={0}
+            //         cameraTextureHeight={textureDims.height}
+            //         cameraTextureWidth={textureDims.width}
+            //         resizeHeight={tensorDims.height}
+            //         resizeWidth={tensorDims.width}
+            //         resizeDepth={3}
+            //         onReady={(imageAsTensors) => handleCameraStream(imageAsTensors)}
+            //         autorender={true}
+            //         useCustomShadersToResize={false}
+            //     />
+            // </View>, [TensorCamera, handleCameraStream]));
         }
 
         return (

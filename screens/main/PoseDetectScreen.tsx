@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useContext, useMemo, useCallback } from 'react';
 import {
     Text,
     View,
@@ -22,7 +22,7 @@ import { ScoreContext } from '../../store/score-context';
 
 const PoseDetectScreen: React.FC = () => {
 
-    // const [score, setScore] = useState<number>(0);
+    const [score, setScore] = useState<number>(0);
     // const scoreCtx = useContext(ScoreContext);
     // const score = useRef<number>(0);
 
@@ -31,13 +31,13 @@ const PoseDetectScreen: React.FC = () => {
         // console.log(`pose: ${JSON.stringify(pose)}`);
     }
 
-    const onScoreUpdate = (tempScore: number) => {
+    const onScoreUpdate = useCallback((tempScore: number) => {
         console.log('PoseDetectScreen onScoreUpdate score', tempScore);
-        // setScore(prevValue=>tempScore+prevValue);
+        setScore(prevValue=>tempScore+prevValue);
         // const tempOriginalScore = score.current;
-        // console.log('PoseDetectScreen onScoreUpdate tempOriginalScore', score);
+        console.log('PoseDetectScreen onScoreUpdate tempOriginalScore', score);
         // score.current = score.current + tempScore;
-    }
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -45,7 +45,13 @@ const PoseDetectScreen: React.FC = () => {
                 onPoseDetected={onPoseDetected}
                 onScoreUpdate={onScoreUpdate}
             />, [])}
-            <ScorePlate />
+            {/* <PoseDetect
+                onPoseDetected={onPoseDetected}
+                onScoreUpdate={onScoreUpdate}
+            /> */}
+            <ScorePlate 
+                score={score}
+            />
         </View>
     );
 }
