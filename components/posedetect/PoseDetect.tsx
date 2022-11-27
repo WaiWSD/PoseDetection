@@ -7,15 +7,8 @@ import {
     Text
 } from 'react-native';
 
-//Expo
-import { Camera, CameraType } from 'expo-camera';
-
-//Tensorflow
-import * as tf from '@tensorflow/tfjs';
-// import * as mobilenet from '@tensorflow-models/mobilenet';
-import * as poseDetection from '@tensorflow-models/pose-detection';
-// import * as mpPose from '@mediapipe/pose';
-import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
+// TFCamera
+import TFCamera from './TFCamera';
 
 //SVG Animation
 import { useSharedValue, useAnimatedStyle, SharedValue, AnimatedStyleProp } from 'react-native-reanimated';
@@ -98,24 +91,8 @@ const PoseDetect: React.FC<{
     onPoseDetected,
     onScoreUpdate
 }) => {
-        //------------------------------------------------
-        //state variables for image/translation processing
-        //------------------------------------------------
-        const [hasPermission, setHasPermission] = useState(null);
-        const [poseData, setPostData] = useState("");
-
-        //Tensorflow and Permissions
-        const [mobilenetModel, setMobilenetModel] = useState(null);
-        const [frameworkReady, setFrameworkReady] = useState(false);
-
-        //TF Camera Decorator
-        const TensorCamera = cameraWithTensors(Camera);
-
-        //RAF ID
-        let requestAnimationFrameId = 0;
 
         //performance hacks (Platform dependent)
-        const textureDims = Platform.OS === "ios" ? { width: 1080, height: 1920 } : { width: 1600, height: 1200 };
         const tensorDims = { width: 152, height: 200 };
 
         // Pose related variables initialising
@@ -145,87 +122,14 @@ const PoseDetect: React.FC<{
         // const [score, setScore] = useState<number>(0);
         // const scoreCtx = useContext(ScoreContext);
 
+        // updateApplePositionPrompt
+        const [shouldUpdate, setShouldUpdate] = useState<number>(0);
+
         // Apple position listener
         const onAppleCoorUpdate = (tempAppleCoor: AppleCoor) => {
             // console.log("PoseDetect onAppleCoorUpdate appleCoor", tempAppleCoor);
             // setAppleCoor(tempAppleCoor);
             appleCoor.current = tempAppleCoor
-        }
-
-        //-----------------------------
-        // Run effect once
-        // 1. Check camera permissions
-        // 2. Initialize TensorFlow
-        // 3. Load Mobilenet Model
-        //-----------------------------
-        useEffect(() => {
-            try {
-                if (!frameworkReady) {
-                    (async () => {
-
-                        //check permissions
-                        const { status } = await Camera.requestCameraPermissionsAsync();
-                        console.log(`permissions status: ${status}`);
-                        setHasPermission(status === 'granted');
-
-                        //we must always wait for the Tensorflow API to be ready before any TF operation...
-                        await tf.ready();
-
-                        //load the mobilenet model and save it in state
-                        setMobilenetModel(await loadMobileNetModel());
-
-                        setFrameworkReady(true);
-                    })();
-                }
-            } catch (err) {
-                console.log("PoseDetectScreen useEffect initialising error", err);
-            }
-
-        }, []);
-
-        //--------------------------
-        // Run onUnmount routine
-        // for cancelling animation 
-        // if running to avoid leaks
-        //--------------------------
-        useEffect(() => {
-            return () => {
-                if (frameworkReady) {
-                    cancelAnimationFrame(requestAnimationFrameId);
-                }
-            };
-        }, [requestAnimationFrameId, frameworkReady]);
-
-        //-----------------------------------------------------------------
-        // Loads the mobilenet Tensorflow model: 
-        // https://github.com/tensorflow/tfjs-models/tree/master/mobilenet
-        // Parameters:
-        // 
-        // NOTE: Here, I suggest you play with the version and alpha params
-        // as they control performance and accuracy for your app. For instance,
-        // a lower alpha increases performance but decreases accuracy. More
-        // information on this topic can be found in the link above.  In this
-        // tutorial, I am going with the defaults: v1 and alpha 1.0
-        //-----------------------------------------------------------------
-        const loadMobileNetModel = async () => {
-            // if you choose tflite over mobilenet uncomment this one
-            // const model = await tflite.loadTFLiteModel('https://tfhub.dev/tensorflow/lite-model/mobilenet_v2_1.0_224/1/metadata/1');
-
-            // or using poseDetection
-            const model = poseDetection.SupportedModels.PoseNet;
-            const detector = await poseDetection.createDetector(model,
-                {
-                    quantBytes: 4,
-                    architecture: 'MobileNetV1',
-                    outputStride: 16,
-                    inputResolution: { width: tensorDims.width, height: tensorDims.height },
-                    multiplier: 0.75
-                }
-            );
-            return detector
-            //// otherwise, use mobilenet by uncomment this
-            // const model = await mobilenet.load();
-            // return model;
         }
 
         //----------------------------------------------------------------------------------------
@@ -243,10 +147,10 @@ const PoseDetect: React.FC<{
         // In this case, we use topk set to 1 as we are interested in the higest result for
         // both performance and simplicity. This means the array will return 1 prediction only!
         //----------------------------------------------------------------------------------------
-        const getPrediction = async (tensor: any) => {
+        const getPrediction = async (tensor: any, mobilenetModel: any) => {
             if (!tensor) { return; }
             if (mobilenetModel.estimatePoses == null) {
-                console.log("PoseDetectScreen getPrediction estimatePoses is null");
+                console.log("TFCamera getPrediction estimatePoses is null");
                 return;
             }
             // //topk set to 1, if use mobilenet
@@ -299,6 +203,7 @@ const PoseDetect: React.FC<{
                                 onScoreUpdate(1);
                                 // scoreCtx.addScore(1);
                                 // score.current = score.current + 1;
+                                // setShouldUpdate(prevValue=>++prevValue);
                             }
                             if (poseCopy.right_wrist.x - 40 <= appleCoor.current.x && poseCopy.right_wrist.x + 40 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
@@ -306,6 +211,7 @@ const PoseDetect: React.FC<{
                                 onScoreUpdate(1);
                                 // scoreCtx.addScore(1);
                                 // score.current = score.current + 1;
+                                // setShouldUpdate(prevValue=>++prevValue);
                             }
                         }
 
@@ -342,73 +248,11 @@ const PoseDetect: React.FC<{
         }
 
 
-        //------------------------------------------------------------------------------
-        // Helper function to handle the camera tensor streams. Here, to keep up reading
-        // input streams, we use requestAnimationFrame JS method to keep looping for 
-        // getting better predictions (until we get one with enough confidence level).
-        // More info on RAF:
-        // https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
-        //------------------------------------------------------------------------------
-        const handleCameraStream = (imageAsTensors: IterableIterator<tf.Tensor3D>) => {
-            const loop = async () => {
-                const nextImageTensor = await imageAsTensors.next().value;
-                await getPrediction(nextImageTensor);
-                requestAnimationFrameId = requestAnimationFrame(loop);
-            };
-            try {
-                if (frameworkReady) {
-                    loop();
-                }
-            } catch (err) {
-                console.log("PoseDetectScreen handleCameraStream", err);
-            }
-        }
-
-        //--------------------------------------------------------------------------------
-        // Helper function to show the Camera View. 
-        //
-        // NOTE: Please note we are using TensorCamera component which is constructed 
-        // on line: 37 of this function component. This is just a decorated expo.Camera 
-        // component with extra functionality to stream Tensors, define texture dimensions
-        // and other goods. For further research:
-        // https://js.tensorflow.org/api_react_native/0.2.1/#cameraWithTensors
-        //--------------------------------------------------------------------------------
-        const renderCameraView = () => {
-            return <View style={styles.cameraView}>
-                <TensorCamera
-                    style={styles.camera}
-                    type={CameraType.back}
-                    zoom={0}
-                    cameraTextureHeight={textureDims.height}
-                    cameraTextureWidth={textureDims.width}
-                    resizeHeight={tensorDims.height}
-                    resizeWidth={tensorDims.width}
-                    resizeDepth={3}
-                    onReady={(imageAsTensors) => handleCameraStream(imageAsTensors)}
-                    autorender={true}
-                    useCustomShadersToResize={false}
-                />
-            </View>
-            // return (useMemo(() => <View style={styles.cameraView}>
-            //     <TensorCamera
-            //         style={styles.camera}
-            //         type={CameraType.back}
-            //         zoom={0}
-            //         cameraTextureHeight={textureDims.height}
-            //         cameraTextureWidth={textureDims.width}
-            //         resizeHeight={tensorDims.height}
-            //         resizeWidth={tensorDims.width}
-            //         resizeDepth={3}
-            //         onReady={(imageAsTensors) => handleCameraStream(imageAsTensors)}
-            //         autorender={true}
-            //         useCustomShadersToResize={false}
-            //     />
-            // </View>, [TensorCamera, handleCameraStream]));
-        }
-
         return (
             <View style={styles.body}>
-                {renderCameraView()}
+                <TFCamera
+                    getPrediction={getPrediction}
+                />
                 <View style={styles.svgView}>
                     <Svg
                         height={cameraHeight}
@@ -429,6 +273,7 @@ const PoseDetect: React.FC<{
                     </Svg>
                 </View>
                 <AppleSvgFrame
+                    updateNumber={shouldUpdate}
                     onAppleCoorUpdate={onAppleCoorUpdate}
                 />
             </View>

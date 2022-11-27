@@ -25,7 +25,7 @@ const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
 
 export type AppleCoor = { x: number, y: number };
 
-const AppleSvgFrame: React.FC<{ onAppleCoorUpdate: (appleCoor: AppleCoor) => void }> = ({
+const AppleSvgFrame: React.FC<{ onAppleCoorUpdate: (appleCoor: AppleCoor) => void, updateNumber: number }> = ({
     onAppleCoorUpdate
 }) => {
 
