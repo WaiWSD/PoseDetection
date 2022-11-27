@@ -197,7 +197,7 @@ const PoseDetect: React.FC<{
                         // setPostData(JSON.stringify(poseCopy));
 
                         if (appleCoor.current.x !== 0 && appleCoor.current.y !== 0) {
-                            if (poseCopy.left_wrist.x - 40 <= appleCoor.current.x && poseCopy.left_wrist.x + 40 >= appleCoor.current.x) {
+                            if (poseCopy.left_wrist.x - 20 <= appleCoor.current.x && poseCopy.left_wrist.x + 20 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
                                 onScoreUpdate(1);
@@ -205,7 +205,7 @@ const PoseDetect: React.FC<{
                                 // score.current = score.current + 1;
                                 setShouldUpdate(prevValue=>++prevValue);
                             }
-                            if (poseCopy.right_wrist.x - 40 <= appleCoor.current.x && poseCopy.right_wrist.x + 40 >= appleCoor.current.x) {
+                            if (poseCopy.right_wrist.x - 20 <= appleCoor.current.x && poseCopy.right_wrist.x + 20 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
                                 onScoreUpdate(1);
