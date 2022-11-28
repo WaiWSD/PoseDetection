@@ -7,6 +7,7 @@ import {
     ViewStyle,
     TextStyle,
     ImageStyle,
+    Alert,
 } from 'react-native';
 
 //Expo
@@ -32,6 +33,19 @@ const PoseDetectScreen: React.FC = () => {
     // const scoreCtx = useContext(ScoreContext);
     // const score = useRef<number>(0);
 
+    const [notice, setNotice] = useState<string>("");
+    const [isAppInit, setIsAppInit] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (notice !== "") {
+            console.log("Alert CameraScreen", notice);
+            Alert.alert("Congratulations", notice, [{ text: "OK", onPress: () => {
+                setIsAppInit(true);
+                setNotice("");
+            } }]);
+        }
+    }, [notice]);
+
     const onPoseDetected = (pose: Pose) => {
         // console.log(`pose: ${JSON.stringify(pose)}`);
     }
@@ -49,18 +63,24 @@ const PoseDetectScreen: React.FC = () => {
     const onStartButtonPressed = () => {
         setScore(0);
         setFinishTime(new Date(new Date().valueOf() + 60 * 1000));
+        setIsAppInit(false);
     };
 
     const onTimerClicked = (_isTimerOn: boolean) => {
         console.log("PoseDetectScreen onTimerClicked _isTimerOn", _isTimerOn);
         // scoreCtx.setIsTimerCountingTrueFalse(true);
         setIsTimerOn(_isTimerOn);
+        if (!_isTimerOn) {
+            if (!isAppInit) {
+                setNotice(`You have scored ${scoreReal}`);
+            }
+        }
     };
 
     useEffect(() => {
         if (score != 0) {
             if (isTimerOn) {
-                setScoreReal(prevValue=>prevValue+100);
+                setScoreReal(prevValue => prevValue + 100);
             }
         } else {
             setScoreReal(0);
@@ -82,13 +102,22 @@ const PoseDetectScreen: React.FC = () => {
                 onPoseDetected={onPoseDetected}
                 onScoreUpdate={onScoreUpdate}
             /> */}
-            <CountdownTimer
-                finishTime={finishTime}
-                onTimerClicked={onTimerClicked}
-            />
-            <ScorePlate
-                score={scoreReal}
-            />
+            <View
+                style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                }}
+            >
+                <CountdownTimer
+                    finishTime={finishTime}
+                    onTimerClicked={onTimerClicked}
+                />
+                <ScorePlate
+                    score={scoreReal}
+                />
+            </View>
         </View>
     );
 }

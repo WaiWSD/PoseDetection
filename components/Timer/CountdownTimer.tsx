@@ -8,7 +8,7 @@ const twoDigit = (number: number) => {
     return ('0' + number).slice(-2);
 };
 
-const CountdownTimer: React.FC<{finishTime: Date, onTimerClicked: (isTimerOn: boolean) => void}> = ({
+const CountdownTimer: React.FC<{ finishTime: Date, onTimerClicked: (isTimerOn: boolean) => void }> = ({
     finishTime,
     onTimerClicked
 }) => {
@@ -33,7 +33,7 @@ const CountdownTimer: React.FC<{finishTime: Date, onTimerClicked: (isTimerOn: bo
         console.log("CountdownTimer _finishTime", _finishTime);
         console.log("CountdownTimer currentDate", currentDate);
         console.log("CountdownTimer _finishTime.valueOf() - currentDate.valueOf()", _finishTime.valueOf() - currentDate.valueOf());
-        if (_finishTime.valueOf() - currentDate.valueOf() >= 0){
+        if (_finishTime.valueOf() - currentDate.valueOf() >= 0) {
             const tempRemainingTime = Math.round((_finishTime.valueOf() - currentDate.valueOf()) / 1000);
             setRemainingTime(tempRemainingTime);
             onTimerClicked(true);
@@ -44,7 +44,11 @@ const CountdownTimer: React.FC<{finishTime: Date, onTimerClicked: (isTimerOn: bo
     }
 
     return (<View>
-        <Text>
+        <Text
+            style={{
+                fontSize: 30,
+            }}
+        >
             {`00:${twoDigit(remainingTime)}`}
         </Text>
     </View>);

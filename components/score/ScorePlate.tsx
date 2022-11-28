@@ -21,17 +21,21 @@ const ScorePlate: React.FC<{ score: number }> = ({ score }) => {
     return (
         <View style={styles.container}>
             {/* <Text>{`${scoreCtx.Score}`}</Text> */}
-            <Text>{`Marks: ${_score}`}</Text>
+            <Text
+                style={{
+                    fontSize: 30,
+                }}
+            >{`Marks: ${_score}`}</Text>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
+        // backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-        width: '100%',
+        // width: '100%',
         // height: '100%',
     }
 });
