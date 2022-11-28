@@ -19,8 +19,8 @@ import Svg, { Line, Path, SvgUri } from 'react-native-svg';
 import AppleSvgFrame, { AppleCoor } from '../Svg/AppleSvgFrame';
 
 // React useContext
-import { ScoreContext } from '../../store/score-context';
-import ScorePlate from '../Score/ScorePlate';
+// import { ScoreContext } from '../../store/score-context';
+// import ScorePlate from '../Score/ScorePlate';
 
 //SVG Global Variables
 const AnimatedLine = Animated.createAnimatedComponent(Line);
@@ -197,21 +197,29 @@ const PoseDetect: React.FC<{
                         // setPostData(JSON.stringify(poseCopy));
 
                         if (appleCoor.current.x !== 0 && appleCoor.current.y !== 0) {
-                            if (poseCopy.left_wrist.x - 20 <= appleCoor.current.x && poseCopy.left_wrist.x + 20 >= appleCoor.current.x) {
+                            if (poseCopy.left_wrist.x - 20 <= appleCoor.current.x &&
+                                poseCopy.left_wrist.x + 20 >= appleCoor.current.x &&
+                                poseCopy.left_wrist.y - 20 <= appleCoor.current.y &&
+                                poseCopy.left_wrist.y + 20 >= appleCoor.current.y
+                            ) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
                                 onScoreUpdate(100);
                                 // scoreCtx.addScore(1);
                                 // score.current = score.current + 1;
-                                setShouldUpdate(prevValue=>++prevValue);
+                                setShouldUpdate(prevValue => ++prevValue);
                             }
-                            if (poseCopy.right_wrist.x - 20 <= appleCoor.current.x && poseCopy.right_wrist.x + 20 >= appleCoor.current.x) {
+                            if (poseCopy.right_wrist.x - 20 <= appleCoor.current.x &&
+                                poseCopy.right_wrist.x + 20 >= appleCoor.current.x &&
+                                poseCopy.right_wrist.y - 20 <= appleCoor.current.y &&
+                                poseCopy.right_wrist.y + 20 >= appleCoor.current.y
+                            ) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
                                 onScoreUpdate(100);
                                 // scoreCtx.addScore(1);
                                 // score.current = score.current + 1;
-                                setShouldUpdate(prevValue=>++prevValue);
+                                setShouldUpdate(prevValue => ++prevValue);
                             }
                         }
 

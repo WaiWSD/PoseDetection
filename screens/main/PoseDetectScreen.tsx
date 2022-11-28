@@ -20,14 +20,15 @@ import MainButton from '../../components/Buttons/MainButton';
 import CountdownTimer from '../../components/Timer/CountdownTimer';
 
 // React useContext
-import { ScoreContext } from '../../store/score-context';
+// import { ScoreContext } from '../../store/score-context';
 
 const PoseDetectScreen: React.FC = () => {
 
     const [finishTime, setFinishTime] = useState(new Date(new Date().valueOf()));
-    const [remainingTime, setRemainingTime] = useState<number>(0);
+    const [isTimerOn, setIsTimerOn] = useState<boolean>(false);
 
     const [score, setScore] = useState<number>(0);
+    const [scoreReal, setScoreReal] = useState<number>(0);
     // const scoreCtx = useContext(ScoreContext);
     // const score = useRef<number>(0);
 
@@ -37,8 +38,9 @@ const PoseDetectScreen: React.FC = () => {
 
     const onScoreUpdate = (tempScore: number) => {
         console.log('PoseDetectScreen onScoreUpdate score', tempScore);
-        console.log("PoseDetectScreen onScoreUpdate seconds", remainingTime);
+
         setScore(prevValue => tempScore + prevValue);
+
         // const tempOriginalScore = score.current;
         // console.log('PoseDetectScreen onScoreUpdate tempOriginalScore', score);
         // score.current = score.current + tempScore;
@@ -49,10 +51,21 @@ const PoseDetectScreen: React.FC = () => {
         setFinishTime(new Date(new Date().valueOf() + 60 * 1000));
     };
 
-    const onTimerClicked = (seconds: number) => {
-        console.log("PoseDetectScreen onTimerClicked seconds", seconds);
-        setRemainingTime(seconds);
+    const onTimerClicked = (_isTimerOn: boolean) => {
+        console.log("PoseDetectScreen onTimerClicked _isTimerOn", _isTimerOn);
+        // scoreCtx.setIsTimerCountingTrueFalse(true);
+        setIsTimerOn(_isTimerOn);
     };
+
+    useEffect(() => {
+        if (score != 0) {
+            if (isTimerOn) {
+                setScoreReal(prevValue=>prevValue+100);
+            }
+        } else {
+            setScoreReal(0);
+        }
+    }, [score]);
 
     return (
         <View style={styles.container}>
@@ -74,7 +87,7 @@ const PoseDetectScreen: React.FC = () => {
                 onTimerClicked={onTimerClicked}
             />
             <ScorePlate
-                score={score}
+                score={scoreReal}
             />
         </View>
     );
