@@ -21,7 +21,7 @@ const ScorePlate: React.FC<{ score: number }> = ({ score }) => {
     return (
         <View style={styles.container}>
             {/* <Text>{`${scoreCtx.Score}`}</Text> */}
-            <Text>{`${_score}`}</Text>
+            <Text>{`Marks: ${_score}`}</Text>
         </View>
     );
 }

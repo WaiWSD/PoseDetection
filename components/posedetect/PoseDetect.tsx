@@ -16,11 +16,11 @@ import Animated from 'react-native-reanimated';
 import Svg, { Line, Path, SvgUri } from 'react-native-svg';
 
 //SVG Frame
-import AppleSvgFrame, { AppleCoor } from '../svg/AppleSvgFrame';
+import AppleSvgFrame, { AppleCoor } from '../Svg/AppleSvgFrame';
 
 // React useContext
 import { ScoreContext } from '../../store/score-context';
-import ScorePlate from '../score/ScorePlate';
+import ScorePlate from '../Score/ScorePlate';
 
 //SVG Global Variables
 const AnimatedLine = Animated.createAnimatedComponent(Line);
@@ -200,7 +200,7 @@ const PoseDetect: React.FC<{
                             if (poseCopy.left_wrist.x - 20 <= appleCoor.current.x && poseCopy.left_wrist.x + 20 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
-                                onScoreUpdate(1);
+                                onScoreUpdate(100);
                                 // scoreCtx.addScore(1);
                                 // score.current = score.current + 1;
                                 setShouldUpdate(prevValue=>++prevValue);
@@ -208,7 +208,7 @@ const PoseDetect: React.FC<{
                             if (poseCopy.right_wrist.x - 20 <= appleCoor.current.x && poseCopy.right_wrist.x + 20 >= appleCoor.current.x) {
                                 console.log("PoseDetect score!!");
                                 // setScore(prevValue => ++prevValue);
-                                onScoreUpdate(1);
+                                onScoreUpdate(100);
                                 // scoreCtx.addScore(1);
                                 // score.current = score.current + 1;
                                 setShouldUpdate(prevValue=>++prevValue);
