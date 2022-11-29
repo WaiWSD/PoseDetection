@@ -70,26 +70,6 @@ const usePosition = (pose: SharedValue<Pose>, valueName1: string, valueName2: st
     }
 };
 
-const defaultPose: Pose = {
-    nose: { x: 0, y: 0 },
-    left_eye: { x: 0, y: 0 },
-    right_eye: { x: 0, y: 0 },
-    left_ear: { x: 0, y: 0 },
-    right_ear: { x: 0, y: 0 },
-    left_shoulder: { x: 0, y: 0 },
-    right_shoulder: { x: 0, y: 0 },
-    left_elbow: { x: 0, y: 0 },
-    right_elbow: { x: 0, y: 0 },
-    left_wrist: { x: 0, y: 0 },
-    right_wrist: { x: 0, y: 0 },
-    left_hip: { x: 0, y: 0 },
-    right_hip: { x: 0, y: 0 },
-    left_knee: { x: 0, y: 0 },
-    right_knee: { x: 0, y: 0 },
-    left_ankle: { x: 0, y: 0 },
-    right_ankle: { x: 0, y: 0 },
-};
-
 // camera size in imaginary pixel
 const cameraWidth = Math.round(Dimensions.get('window').width * 0.9);
 const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
@@ -107,8 +87,32 @@ const PoseDetect: React.FC<{
         //performance hacks (Platform dependent)
         const tensorDims = { width: 152, height: 200 };
 
+        const defaultPose: Pose = {
+            nose: { x: 0, y: 0 },
+            left_eye: { x: 0, y: 0 },
+            right_eye: { x: 0, y: 0 },
+            left_ear: { x: 0, y: 0 },
+            right_ear: { x: 0, y: 0 },
+            left_shoulder: { x: 0, y: 0 },
+            right_shoulder: { x: 0, y: 0 },
+            left_elbow: { x: 0, y: 0 },
+            right_elbow: { x: 0, y: 0 },
+            left_wrist: { x: 0, y: 0 },
+            right_wrist: { x: 0, y: 0 },
+            left_hip: { x: 0, y: 0 },
+            right_hip: { x: 0, y: 0 },
+            left_knee: { x: 0, y: 0 },
+            right_knee: { x: 0, y: 0 },
+            left_ankle: { x: 0, y: 0 },
+            right_ankle: { x: 0, y: 0 },
+        };
+
         // Pose related variables initialising
         const pose = useSharedValue(defaultPose);
+
+        // useEffect(() => {
+        //     console.log("PoseDetect useEffect pose", pose);
+        // }, [pose]);
 
         // Coordination of the lines linking body points for SVG drawing 
         const leftWristToElbowPosition = usePosition(pose, 'left_wrist', 'left_elbow');
