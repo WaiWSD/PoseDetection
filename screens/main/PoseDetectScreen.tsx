@@ -8,6 +8,8 @@ import {
     TextStyle,
     ImageStyle,
     Alert,
+    Image,
+    Dimensions
 } from 'react-native';
 
 //Expo
@@ -21,7 +23,11 @@ import MainButton from '../../components/Buttons/MainButton';
 import CountdownTimer from '../../components/Timer/CountdownTimer';
 
 // React useContext
-// import { ScoreContext } from '../../store/score-context';
+import { ScoreContext } from '../../store/score-context';
+
+// camera size in imaginary pixel
+const cameraWidth = Math.round(Dimensions.get('window').width * 0.9);
+const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
 
 const PoseDetectScreen: React.FC = () => {
 
@@ -30,19 +36,23 @@ const PoseDetectScreen: React.FC = () => {
 
     const [score, setScore] = useState<number>(0);
     const [scoreReal, setScoreReal] = useState<number>(0);
-    // const scoreCtx = useContext(ScoreContext);
+    const scoreCtx = useContext(ScoreContext);
     // const score = useRef<number>(0);
 
     const [notice, setNotice] = useState<string>("");
     const [isAppInit, setIsAppInit] = useState<boolean>(true);
+    const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
+    const [gameCounter, setGameCounter] = useState<number>(0);
 
     useEffect(() => {
         if (notice !== "") {
             console.log("Alert CameraScreen", notice);
-            Alert.alert("Congratulations", notice, [{ text: "OK", onPress: () => {
-                setIsAppInit(true);
-                setNotice("");
-            } }]);
+            Alert.alert("Congratulations", notice, [{
+                text: "OK", onPress: () => {
+                    setNotice("");
+                    setGameCounter(prevValue => ++prevValue);
+                }
+            }]);
         }
     }, [notice]);
 
@@ -62,8 +72,11 @@ const PoseDetectScreen: React.FC = () => {
 
     const onStartButtonPressed = () => {
         setScore(0);
+        setIsCameraOpen(true);
+        // const timerId = setTimeout(() => {
         setFinishTime(new Date(new Date().valueOf() + 60 * 1000));
         setIsAppInit(false);
+        // }, 2* 1000);
     };
 
     const onTimerClicked = (_isTimerOn: boolean) => {
@@ -73,6 +86,8 @@ const PoseDetectScreen: React.FC = () => {
         if (!_isTimerOn) {
             if (!isAppInit) {
                 setNotice(`You have scored ${scoreReal}`);
+                setIsAppInit(true);
+                setIsCameraOpen(false);
             }
         }
     };
@@ -87,21 +102,56 @@ const PoseDetectScreen: React.FC = () => {
         }
     }, [score]);
 
+    useEffect(() => {
+        if (gameCounter >= 2) {
+            setGameCounter(0);
+            scoreCtx.setScreen(0);
+        }
+    }, [gameCounter]);
+
     return (
         <View style={styles.container}>
-            <MainButton
-                onPress={onStartButtonPressed}
+            <View
+                style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                }}
             >
-                Start
-            </MainButton>
-            {useMemo(() => <PoseDetect
+                <MainButton
+                    onPress={() => {
+                        scoreCtx.setScreen(0);
+                    }}
+                >
+                    Back
+                </MainButton>
+                <MainButton
+                    onPress={onStartButtonPressed}
+                >
+                    Start
+                </MainButton>
+            </View>
+            {/* {useMemo(() => <PoseDetect
                 onPoseDetected={onPoseDetected}
                 onScoreUpdate={onScoreUpdate}
-            />, [])}
-            {/* <PoseDetect
+            />, [])} */}
+            <PoseDetect
                 onPoseDetected={onPoseDetected}
                 onScoreUpdate={onScoreUpdate}
-            /> */}
+            />
+            {/* {isCameraOpen ? <PoseDetect
+                onPoseDetected={onPoseDetected}
+                onScoreUpdate={onScoreUpdate}
+            /> :
+                <View
+                    style={{
+                        height: cameraHeight,
+                        width: cameraWidth,
+                        backgroundColor: 'black'
+                    }}
+                ></View>
+            } */}
             <View
                 style={{
                     width: '100%',
@@ -118,6 +168,17 @@ const PoseDetectScreen: React.FC = () => {
                     score={scoreReal}
                 />
             </View>
+            {/* <View>
+                <Image
+                    source={require('../../assets/road.png')}
+                    style={{
+                        // width: "100%",
+                        height: 150,
+                        resizeMode: 'stretch',
+                        backgroundColor: 'green',
+                    }}
+                />
+            </View> */}
         </View>
     );
 }

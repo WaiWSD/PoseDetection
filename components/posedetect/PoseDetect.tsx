@@ -47,15 +47,27 @@ export type Pose = {
 }
 
 const usePosition = (pose: SharedValue<Pose>, valueName1: string, valueName2: string) => {
-    return useAnimatedStyle<any>(
-        () => ({
-            x1: pose.value[valueName1].x,
-            y1: pose.value[valueName1].y,
-            x2: pose.value[valueName2].x,
-            y2: pose.value[valueName2].y,
-        }),
-        [pose],
-    );
+    if (pose.value != null) {
+        return useAnimatedStyle<any>(
+            () => ({
+                x1: pose.value[valueName1].x,
+                y1: pose.value[valueName1].y,
+                x2: pose.value[valueName2].x,
+                y2: pose.value[valueName2].y,
+            }),
+            [pose],
+        );
+    } else {
+        return useAnimatedStyle<any>(
+            () => ({
+                x1: pose[valueName1].x,
+                y1: pose[valueName1].y,
+                x2: pose[valueName2].x,
+                y2: pose[valueName2].y,
+            }),
+            [pose],
+        );
+    }
 };
 
 const defaultPose: Pose = {
@@ -308,7 +320,7 @@ const styles = StyleSheet.create({
         height: cameraHeight,
         // paddingTop: 10,
         zIndex: -0.1,
-        // backgroundColor: 'yellow',
+        backgroundColor: 'black',
     },
     svgView: {
         position: 'absolute',

@@ -4,21 +4,21 @@ type ScoreContextObj = {
     Score: number;
     addScore: (newPoint: number) => void;
     removeScore: () => void;
-    isTimerCounting: boolean;
-    setIsTimerCountingTrueFalse: (isOn: boolean) => void;
+    whichScreen: number;
+    setScreen: (whichScreen: number) => void;
 }
 
 export const ScoreContext = React.createContext<ScoreContextObj>({
     Score: 0,
     addScore: () => { },
     removeScore: () => { },
-    isTimerCounting: false,
-    setIsTimerCountingTrueFalse: () => {},
+    whichScreen: 0,
+    setScreen: () => {}
 });
 
 const ScoreContextProvider: React.FC<{children: any}> = (props) => {
     const [score, setScore] = useState<number>(0);
-    const [isTimerCounting, setIsTimerCounting] = useState<boolean>(false);
+    const [whichScreen, setWhichScreen] = useState<number>(0);
 
     const addScoreHandler = (newPoint: number) => {
         setScore((prevScore) => prevScore + newPoint);
@@ -28,16 +28,18 @@ const ScoreContextProvider: React.FC<{children: any}> = (props) => {
         setScore(0);
     }
 
-    const setIsTimerCountingTrueFalse = (isOn: boolean) => {
-        setIsTimerCounting(isOn);
+    const setScreen = (_whichScreen: number) => {
+        console.log("score-context setScreen _whichScreen", _whichScreen);
+        console.log("score-context setScreen whichScreen", whichScreen);
+        setWhichScreen(_whichScreen);
     }
 
     const contextValue: ScoreContextObj = {
         Score: score,
         addScore: addScoreHandler,
         removeScore: removeScoreHandler,
-        isTimerCounting: isTimerCounting,
-        setIsTimerCountingTrueFalse: setIsTimerCountingTrueFalse
+        whichScreen: whichScreen,
+        setScreen: setScreen
     }
 
     return <ScoreContext.Provider value={contextValue}>{props.children}</ScoreContext.Provider>
