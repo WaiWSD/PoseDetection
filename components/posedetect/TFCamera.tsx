@@ -157,7 +157,7 @@ const TFCamera: React.FC<{
         return <View style={styles.cameraView}>
             <TensorCamera
                 style={styles.camera}
-                type={CameraType.back}
+                type={CameraType.front}
                 zoom={0}
                 cameraTextureHeight={textureDims.height}
                 cameraTextureWidth={textureDims.width}
