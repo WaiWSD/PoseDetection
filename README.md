@@ -70,3 +70,22 @@ You may then build an apk for testing:
 ```
 eas build --profile preview --platform android
 ```
+
+# To Build An iOS App
+
+Two items need to be here: XXXXX.mobileprovision for the app itself and distribution.cer for the developer's app distribution right. Double clicking the .cer to generate .p12 cert. All of these can be generated from Apple Developer webpage
+
+Remember to setup this item in eas.json to let the eas build find local certs instead of asking you for the login name and password of Apple Developer account:
+
+```
+...
+    "production": {
+      "credentialsSource": "local"
+    }
+...
+```
+
+Finally you may build a ips file for testing:
+```
+eas build --plaform ios
+```
