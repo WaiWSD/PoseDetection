@@ -103,7 +103,7 @@ const PoseDetectScreen: React.FC = () => {
     }, [score]);
 
     useEffect(() => {
-        if (gameCounter >= 1) {
+        if (gameCounter >= 100) {
             setGameCounter(0);
             scoreCtx.setScreen(0);
         }

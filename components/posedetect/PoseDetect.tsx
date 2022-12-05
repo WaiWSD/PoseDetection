@@ -241,14 +241,20 @@ const PoseDetect: React.FC<{
 
                         pose.value = poseCopy;
 
+                        return true;
+
                     } else {
                         pose.value = poseCopy;
+
+                        return true;
                     }
 
                 }
 
             } catch (err) {
                 console.log("PoseDetectScreen getPrediction Error", err);
+
+                return false;
             }
 
             // Run inference and get output tensors.

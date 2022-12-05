@@ -24,7 +24,7 @@ const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
 // const cameraHeight = 400;
 
 const TFCamera: React.FC<{
-    getPrediction: (tensor: IterableIterator<tf.Tensor3D>, mobilenetModel: any) => void,
+    getPrediction: (tensor: IterableIterator<tf.Tensor3D>, mobilenetModel: any) => Promise<boolean>,
 }> = ({
     getPrediction
 }) => {
@@ -66,6 +66,10 @@ const TFCamera: React.FC<{
                         //we must always wait for the Tensorflow API to be ready before any TF operation...
                         await tf.ready();
 
+                        console.log("tf.engine().memory()", tf.engine().memory());
+
+                        tf.engine().startScope()
+
                         //load the mobilenet model and save it in state
                         setMobilenetModel(await loadMobileNetModel());
 
@@ -87,6 +91,7 @@ const TFCamera: React.FC<{
             return () => {
                 if (frameworkReady) {
                     cancelAnimationFrame(requestAnimationFrameId);
+                    tf.engine().endScope();
                 }
             };
         }, [requestAnimationFrameId, frameworkReady]);
@@ -132,8 +137,10 @@ const TFCamera: React.FC<{
         //------------------------------------------------------------------------------
         const handleCameraStream = (imageAsTensors: IterableIterator<tf.Tensor3D>) => {
             const loop = async () => {
+                tf.engine().startScope()
                 const nextImageTensor = await imageAsTensors.next().value;
-                await getPrediction(nextImageTensor, mobilenetModel);
+                const predictionSuccessful = await getPrediction(nextImageTensor, mobilenetModel);
+                tf.engine().endScope()
                 requestAnimationFrameId = requestAnimationFrame(loop);
             };
             try {

@@ -89,3 +89,8 @@ Finally you may build a ips file for testing:
 ```
 eas build --plaform ios
 ```
+
+# Version
+
+0.1.1 - A functional Game with refactored Tensorflow JS module
+0.2.0 - Fixed the memory leakage when looping the camera video

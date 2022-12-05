@@ -3,7 +3,7 @@
     "name": "PoseDetect",
     "slug": "PoseDetection",
     "owner": "waiwongstringdynamic",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -21,7 +21,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.midbot.posedetect",
-      "buildNumber": "0.1.1",
+      "buildNumber": "0.2.0",
       "infoPlist": {
         "NSCameraUsageDescription": "In order to share your workspace photos we need access your camera."
       }
