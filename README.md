@@ -87,7 +87,7 @@ Remember to setup this item in eas.json to let the eas build find local certs in
 
 Finally you may build a ips file for testing:
 ```
-eas build --plaform ios
+eas build --platform ios
 ```
 
 # Version

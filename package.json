@@ -20,7 +20,7 @@
     "@types/react": "~18.0.0",
     "@types/react-native": "^0.69.15",
     "expo": "~46.0.16",
-    "expo-camera": "~12.4.0",
+    "expo-camera": "^12.3.0",
     "expo-constants": "~13.2.4",
     "expo-gl": "~11.4.0",
     "expo-gl-cpp": "^11.4.0",

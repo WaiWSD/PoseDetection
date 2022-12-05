@@ -32,7 +32,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.midbot.posedetect",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": []
     },
     "web": {
