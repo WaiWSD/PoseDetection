@@ -18,8 +18,12 @@ import * as poseDetection from '@tensorflow-models/pose-detection';
 import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
 
 // camera size in imaginary pixel
-const cameraWidth = Math.round(Dimensions.get('window').width * 0.9);
-const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
+const cameraWidth = Platform.OS === "ios" ?
+    Math.round(Dimensions.get('window').width * 0.9) :
+    Math.round(Dimensions.get('window').height * 0.9);
+const cameraHeight = Platform.OS === "ios" ?
+    Math.round(Dimensions.get('window').height * 0.3) :
+    Math.round(Dimensions.get('window').width * 0.4);
 // const cameraWidth = 350;
 // const cameraHeight = 400;
 
@@ -173,6 +177,7 @@ const TFCamera: React.FC<{
                 resizeHeight={tensorDims.height}
                 resizeWidth={tensorDims.width}
                 resizeDepth={3}
+                rotation={Platform.OS === "ios" ? whichCamera === CameraType.front ? 90 : 270 : 0}
                 onReady={(imageAsTensors) => handleCameraStream(imageAsTensors)}
                 autorender={true}
                 useCustomShadersToResize={false}

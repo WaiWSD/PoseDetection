@@ -4,7 +4,7 @@
     "slug": "PoseDetection",
     "owner": "waiwongstringdynamic",
     "version": "0.3.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {

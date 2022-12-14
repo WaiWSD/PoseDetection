@@ -18,8 +18,12 @@ import Svg, { Line, Path, SvgUri } from 'react-native-svg';
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 // camera size in imaginary pixel
-const cameraWidth = Math.round(Dimensions.get('window').width * 0.9);
-const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
+const cameraWidth = Platform.OS === "ios" ?
+    Math.round(Dimensions.get('window').width * 0.9) :
+    Math.round(Dimensions.get('window').height * 0.9);
+const cameraHeight = Platform.OS === "ios" ?
+    Math.round(Dimensions.get('window').height * 0.3) :
+    Math.round(Dimensions.get('window').width * 0.4);
 // const cameraWidth = 350;
 // const cameraHeight = 400;
 
