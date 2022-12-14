@@ -7,6 +7,9 @@ import {
     Text
 } from 'react-native';
 
+//Expo
+import { CameraType } from 'expo-camera';
+
 // TFCamera
 import TFCamera from './TFCamera';
 
@@ -79,9 +82,11 @@ const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
 const PoseDetect: React.FC<{
     onPoseDetected: (pose: Pose) => void,
     onScoreUpdate: (score: number) => void
+    whichCamera: CameraType
 }> = ({
     onPoseDetected,
-    onScoreUpdate
+    onScoreUpdate,
+    whichCamera
 }) => {
 
         //performance hacks (Platform dependent)
@@ -282,7 +287,8 @@ const PoseDetect: React.FC<{
             <View style={styles.body}>
                 {useMemo(() => <TFCamera
                     getPrediction={getPrediction}
-                />, [])}
+                    whichCamera={whichCamera}
+                />, [whichCamera])}
                 <View style={styles.svgView}>
                     <Svg
                         height={cameraHeight}

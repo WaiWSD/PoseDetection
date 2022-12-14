@@ -25,8 +25,10 @@ const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
 
 const TFCamera: React.FC<{
     getPrediction: (tensor: IterableIterator<tf.Tensor3D>, mobilenetModel: any) => Promise<boolean>,
+    whichCamera: CameraType
 }> = ({
-    getPrediction
+    getPrediction,
+    whichCamera
 }) => {
         //------------------------------------------------
         //state variables for image/translation processing
@@ -164,7 +166,7 @@ const TFCamera: React.FC<{
         return <View style={styles.cameraView}>
             <TensorCamera
                 style={styles.camera}
-                type={CameraType.front}
+                type={whichCamera}
                 zoom={0}
                 cameraTextureHeight={textureDims.height}
                 cameraTextureWidth={textureDims.width}

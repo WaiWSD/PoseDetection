@@ -14,6 +14,7 @@ import {
 
 //Expo
 import Constants from 'expo-constants';
+import { CameraType } from 'expo-camera';
 
 //Components
 // import PoseDetectManager, { Pose } from '../../components/posedetect/PoseDetectManager';
@@ -43,6 +44,8 @@ const PoseDetectScreen: React.FC = () => {
     const [isAppInit, setIsAppInit] = useState<boolean>(true);
     const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
     const [gameCounter, setGameCounter] = useState<number>(0);
+
+    const [whichCamera, setWhichCamera] = useState<CameraType>(CameraType.front)
 
     useEffect(() => {
         if (notice !== "") {
@@ -127,6 +130,19 @@ const PoseDetectScreen: React.FC = () => {
                     Back
                 </MainButton>
                 <MainButton
+                        onPress={() => {
+                            setWhichCamera((prevValue)=>{
+                                if (prevValue === CameraType.front) {
+                                    return CameraType.back
+                                } else {
+                                    return CameraType.front
+                                }
+                            })
+                        }}
+                >
+                    Switch
+                </MainButton>
+                <MainButton
                     onPress={onStartButtonPressed}
                 >
                     Start
@@ -139,6 +155,7 @@ const PoseDetectScreen: React.FC = () => {
             <PoseDetect
                 onPoseDetected={onPoseDetected}
                 onScoreUpdate={onScoreUpdate}
+                whichCamera={whichCamera}
             />
             {/* {isCameraOpen ? <PoseDetect
                 onPoseDetected={onPoseDetected}
