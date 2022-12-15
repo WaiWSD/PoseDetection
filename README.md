@@ -94,3 +94,4 @@ eas build --platform ios
 
 0.1.1 - A functional Game with refactored Tensorflow JS module
 0.2.0 - Fixed the memory leakage when looping the camera video
+0.3.0 - Enabling the landscape only mode

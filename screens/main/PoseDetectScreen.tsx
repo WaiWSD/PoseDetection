@@ -9,7 +9,8 @@ import {
     ImageStyle,
     Alert,
     Image,
-    Dimensions
+    Dimensions,
+    Animated
 } from 'react-native';
 
 //Expo
@@ -46,6 +47,9 @@ const PoseDetectScreen: React.FC = () => {
     const [gameCounter, setGameCounter] = useState<number>(0);
 
     const [whichCamera, setWhichCamera] = useState<CameraType>(CameraType.front)
+
+    // For the movement of monkey
+    const monkeyBottomAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         if (notice !== "") {
@@ -106,6 +110,17 @@ const PoseDetectScreen: React.FC = () => {
     }, [score]);
 
     useEffect(() => {
+        const distanceFromBottom = Math.max(scoreReal / 1000 * 240, 240);
+
+        Animated.timing(monkeyBottomAnim, {
+            toValue: distanceFromBottom,
+            duration: 1000,
+            useNativeDriver: false
+        }).start();
+
+    }, [scoreReal]);
+
+    useEffect(() => {
         if (gameCounter >= 100) {
             setGameCounter(0);
             scoreCtx.setScreen(0);
@@ -114,24 +129,78 @@ const PoseDetectScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <View
-                style={{
-                    width: '100%',
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-                    alignItems: 'center',
-                }}
+            <View style={{
+                width: "25%",
+                height: "100%",
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
             >
-                <MainButton
-                    onPress={() => {
-                        scoreCtx.setScreen(0);
+                <View style={{
+                    height: 300,
+                }}>
+
+                    <View style={{
+                        bottom: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        zIndex: -1,
+                    }}>
+                        <Image
+                            source={require('../../assets/ladder.png')}
+                            style={{
+                                height: "100%",
+                                resizeMode: 'contain',
+                                backgroundColor: 'green',
+                            }}
+                        />
+                    </View>
+                    <Animated.View style={[
+                        {
+                            position: "absolute",
+                            bottom: 0,
+                            left: 0,
+                            zIndex: 1,
+                        },
+                        {
+                            bottom: monkeyBottomAnim
+                        }
+                    ]}>
+                        <Image
+                            source={require('../../assets/monkey.png')}
+                            style={{
+                                resizeMode: 'contain',
+                                backgroundColor: 'green',
+                            }}
+                        />
+                    </Animated.View>
+                </View>
+            </View>
+            <View style={{
+                width: "75%",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+            }}>
+                <View
+                    style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                        alignItems: 'center',
                     }}
                 >
-                    Back
-                </MainButton>
-                <MainButton
+                    <MainButton
                         onPress={() => {
-                            setWhichCamera((prevValue)=>{
+                            scoreCtx.setScreen(0);
+                        }}
+                    >
+                        Back
+                    </MainButton>
+                    <MainButton
+                        onPress={() => {
+                            setWhichCamera((prevValue) => {
                                 if (prevValue === CameraType.front) {
                                     return CameraType.back
                                 } else {
@@ -139,53 +208,37 @@ const PoseDetectScreen: React.FC = () => {
                                 }
                             })
                         }}
-                >
-                    Switch
-                </MainButton>
-                <MainButton
-                    onPress={onStartButtonPressed}
-                >
-                    Start
-                </MainButton>
-            </View>
-            {/* {useMemo(() => <PoseDetect
-                onPoseDetected={onPoseDetected}
-                onScoreUpdate={onScoreUpdate}
-            />, [])} */}
-            <PoseDetect
-                onPoseDetected={onPoseDetected}
-                onScoreUpdate={onScoreUpdate}
-                whichCamera={whichCamera}
-            />
-            {/* {isCameraOpen ? <PoseDetect
-                onPoseDetected={onPoseDetected}
-                onScoreUpdate={onScoreUpdate}
-            /> :
+                    >
+                        Switch
+                    </MainButton>
+                    <MainButton
+                        onPress={onStartButtonPressed}
+                    >
+                        Start
+                    </MainButton>
+                </View>
+                <PoseDetect
+                    onPoseDetected={onPoseDetected}
+                    onScoreUpdate={onScoreUpdate}
+                    whichCamera={whichCamera}
+                />
                 <View
                     style={{
-                        height: cameraHeight,
-                        width: cameraWidth,
-                        backgroundColor: 'black'
+                        width: '100%',
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                        alignItems: 'center',
                     }}
-                ></View>
-            } */}
-            <View
-                style={{
-                    width: '100%',
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-                    alignItems: 'center',
-                }}
-            >
-                <CountdownTimer
-                    finishTime={finishTime}
-                    onTimerClicked={onTimerClicked}
-                />
-                <ScorePlate
-                    score={scoreReal}
-                />
-            </View>
-            {/* <View>
+                >
+                    <CountdownTimer
+                        finishTime={finishTime}
+                        onTimerClicked={onTimerClicked}
+                    />
+                    <ScorePlate
+                        score={scoreReal}
+                    />
+                </View>
+                {/* <View>
                 <Image
                     source={require('../../assets/road.png')}
                     style={{
@@ -196,6 +249,7 @@ const PoseDetectScreen: React.FC = () => {
                     }}
                 />
             </View> */}
+            </View>
         </View>
     );
 }
@@ -203,6 +257,7 @@ const PoseDetectScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
     container: {
+        flexDirection: 'row',
         flex: 1,
         width: '100%',
         justifyContent: 'center',
