@@ -9,8 +9,7 @@ import {
     ImageStyle,
     Alert,
     Image,
-    Dimensions,
-    Animated
+    Dimensions
 } from 'react-native';
 
 //Expo
@@ -23,13 +22,10 @@ import PoseDetect, { Pose } from '../../components/Posedetect/PoseDetect';
 import ScorePlate from '../../components/Score/ScorePlate';
 import MainButton from '../../components/Buttons/MainButton';
 import CountdownTimer from '../../components/Timer/CountdownTimer';
+import MonkeyClimbing from '../../components/Animation/MonkeyClimbing';
 
 // React useContext
 import { ScoreContext } from '../../store/score-context';
-
-// camera size in imaginary pixel
-const cameraWidth = Math.round(Dimensions.get('window').width * 0.9);
-const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
 
 const PoseDetectScreen: React.FC = () => {
 
@@ -47,9 +43,6 @@ const PoseDetectScreen: React.FC = () => {
     const [gameCounter, setGameCounter] = useState<number>(0);
 
     const [whichCamera, setWhichCamera] = useState<CameraType>(CameraType.front)
-
-    // For the movement of monkey
-    const monkeyBottomAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         if (notice !== "") {
@@ -110,17 +103,6 @@ const PoseDetectScreen: React.FC = () => {
     }, [score]);
 
     useEffect(() => {
-        const distanceFromBottom = Math.max(scoreReal / 1000 * 240, 240);
-
-        Animated.timing(monkeyBottomAnim, {
-            toValue: distanceFromBottom,
-            duration: 1000,
-            useNativeDriver: false
-        }).start();
-
-    }, [scoreReal]);
-
-    useEffect(() => {
         if (gameCounter >= 100) {
             setGameCounter(0);
             scoreCtx.setScreen(0);
@@ -129,54 +111,9 @@ const PoseDetectScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <View style={{
-                width: "25%",
-                height: "100%",
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}
-            >
-                <View style={{
-                    height: 300,
-                }}>
-
-                    <View style={{
-                        bottom: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        zIndex: -1,
-                    }}>
-                        <Image
-                            source={require('../../assets/ladder.png')}
-                            style={{
-                                height: "100%",
-                                resizeMode: 'contain',
-                                backgroundColor: 'green',
-                            }}
-                        />
-                    </View>
-                    <Animated.View style={[
-                        {
-                            position: "absolute",
-                            bottom: 0,
-                            left: 0,
-                            zIndex: 1,
-                        },
-                        {
-                            bottom: monkeyBottomAnim
-                        }
-                    ]}>
-                        <Image
-                            source={require('../../assets/monkey.png')}
-                            style={{
-                                resizeMode: 'contain',
-                                backgroundColor: 'green',
-                            }}
-                        />
-                    </Animated.View>
-                </View>
-            </View>
+            <MonkeyClimbing
+                score={scoreReal}
+            />
             <View style={{
                 width: "75%",
                 height: "100%",
