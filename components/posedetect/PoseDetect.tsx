@@ -20,6 +20,7 @@ import Svg, { Line, Path, SvgUri } from 'react-native-svg';
 
 //SVG Frame
 import AppleSvgFrame, { AppleCoor } from '../Svg/AppleSvgFrame';
+import StretchSvgFrame, { Coor } from '../Svg/StretchSvgFrame';
 
 // React useContext
 // import { ScoreContext } from '../../store/score-context';
@@ -142,6 +143,12 @@ const PoseDetect: React.FC<{
         // Apple position
         // const [appleCoor, setAppleCoor] = useState<AppleCoor>({ x: 0, y: 0 });
         const appleCoor = useRef<AppleCoor>({ x: 0, y: 0 });
+        // Stretching points position
+        const leftHandStretchCoor = useRef<Coor>({ x: 0, y: 0 });
+        const rightHandStretchCoor = useRef<Coor>({ x: 0, y: 0 });
+
+        // Stage of stretch
+        const [stretchStage, setStretchStage] = useState<number>(0);
 
         // Score of game
         // const [score, setScore] = useState<number>(0);
@@ -150,11 +157,13 @@ const PoseDetect: React.FC<{
         // updateApplePositionPrompt
         const [shouldUpdate, setShouldUpdate] = useState<number>(0);
 
-        // Apple position listener
-        const onAppleCoorUpdate = (tempAppleCoor: AppleCoor) => {
-            // console.log("PoseDetect onAppleCoorUpdate appleCoor", tempAppleCoor);
-            // setAppleCoor(tempAppleCoor);
-            appleCoor.current = tempAppleCoor
+        // Hands point position listener
+        const onHandsCoorUpdate: (tempCoor: {
+            left: Coor;
+            right: Coor;
+        }) => void = (tempCoor) => {
+            leftHandStretchCoor.current = tempCoor.left;
+            rightHandStretchCoor.current = tempCoor.right;
         }
 
         //----------------------------------------------------------------------------------------
@@ -216,37 +225,46 @@ const PoseDetect: React.FC<{
                             poseCopy[poseOne.keypoints[i].name].y = poseOne.keypoints[i].y * (cameraHeight / tensorDims.height);
                         }
 
-                        // console.log(`poseCopy: ${JSON.stringify(poseCopy)}`);
+                        console.log(`poseCopy.left_wrist: ${JSON.stringify(poseCopy.left_wrist)}`);
+                        console.log(`poseCopy.right_wrist: ${JSON.stringify(poseCopy.right_wrist)}`);
+                        console.log("leftHandStretchCoor:", leftHandStretchCoor.current);
+                        console.log("rightHandStretchCoor:", rightHandStretchCoor.current);
                         onPoseDetected(poseCopy);
 
                         // setPostData(JSON.stringify(poseCopy));
 
-                        if (appleCoor.current.x !== 0 && appleCoor.current.y !== 0) {
-                            if (poseCopy.left_wrist.x - 20 <= appleCoor.current.x &&
-                                poseCopy.left_wrist.x + 20 >= appleCoor.current.x &&
-                                poseCopy.left_wrist.y - 20 <= appleCoor.current.y &&
-                                poseCopy.left_wrist.y + 20 >= appleCoor.current.y
+                        // Hands' position checker
+                        if (leftHandStretchCoor.current.x !== 0 && leftHandStretchCoor.current.y !== 0) {
+                            if (poseCopy.left_wrist.x - 35 <= leftHandStretchCoor.current.x &&
+                                poseCopy.left_wrist.x + 35 >= leftHandStretchCoor.current.x &&
+                                poseCopy.left_wrist.y - 35 <= leftHandStretchCoor.current.y &&
+                                poseCopy.left_wrist.y + 35 >= leftHandStretchCoor.current.y
                             ) {
-                                console.log("PoseDetect score!!");
-                                // setScore(prevValue => ++prevValue);
-                                onScoreUpdate(100);
-                                // scoreCtx.addScore(1);
-                                // score.current = score.current + 1;
-                                setShouldUpdate(prevValue => ++prevValue);
+                                // Hands' position checker
+                                if (rightHandStretchCoor.current.x !== 0 && rightHandStretchCoor.current.y !== 0) {
+                                    if (poseCopy.right_wrist.x - 35 <= rightHandStretchCoor.current.x &&
+                                        poseCopy.right_wrist.x + 35 >= rightHandStretchCoor.current.x &&
+                                        poseCopy.right_wrist.y - 35 <= rightHandStretchCoor.current.y &&
+                                        poseCopy.right_wrist.y + 35 >= rightHandStretchCoor.current.y
+                                    ) {
+                                        console.log("PoseDetect score!!");
+                                        // setScore(prevValue => ++prevValue);
+                                        onScoreUpdate(1);
+                                        // scoreCtx.addScore(1);
+                                        // score.current = score.current + 1;
+                                        setStretchStage(prevValue => {
+                                            if (prevValue <= 2) {
+                                                return ++prevValue;
+                                            } else {
+                                                return 0;
+                                            }
+                                        });
+                                    }
+                                }
                             }
-                            if (poseCopy.right_wrist.x - 20 <= appleCoor.current.x &&
-                                poseCopy.right_wrist.x + 20 >= appleCoor.current.x &&
-                                poseCopy.right_wrist.y - 20 <= appleCoor.current.y &&
-                                poseCopy.right_wrist.y + 20 >= appleCoor.current.y
-                            ) {
-                                console.log("PoseDetect score!!");
-                                // setScore(prevValue => ++prevValue);
-                                onScoreUpdate(100);
-                                // scoreCtx.addScore(1);
-                                // score.current = score.current + 1;
-                                setShouldUpdate(prevValue => ++prevValue);
-                            }
+
                         }
+
 
                         pose.value = poseCopy;
 
@@ -312,9 +330,9 @@ const PoseDetect: React.FC<{
                         <AnimatedLine animatedProps={hipToHipPosition} stroke="red" strokeWidth="2" />
                     </Svg>
                 </View>
-                <AppleSvgFrame
-                    updateNumber={shouldUpdate}
-                    onAppleCoorUpdate={onAppleCoorUpdate}
+                <StretchSvgFrame
+                    stretchStage={stretchStage}
+                    onHandsCoorUpdate={onHandsCoorUpdate}
                 />
             </View>
         );
