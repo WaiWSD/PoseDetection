@@ -235,17 +235,17 @@ const PoseDetect: React.FC<{
 
                         // Hands' position checker
                         if (leftHandStretchCoor.current.x !== 0 && leftHandStretchCoor.current.y !== 0) {
-                            if (poseCopy.left_wrist.x - 35 <= leftHandStretchCoor.current.x &&
-                                poseCopy.left_wrist.x + 35 >= leftHandStretchCoor.current.x &&
-                                poseCopy.left_wrist.y - 35 <= leftHandStretchCoor.current.y &&
-                                poseCopy.left_wrist.y + 35 >= leftHandStretchCoor.current.y
+                            if (poseCopy.left_wrist.x - 50 <= leftHandStretchCoor.current.x &&
+                                poseCopy.left_wrist.x + 50 >= leftHandStretchCoor.current.x &&
+                                poseCopy.left_wrist.y - 50 <= leftHandStretchCoor.current.y &&
+                                poseCopy.left_wrist.y + 50 >= leftHandStretchCoor.current.y
                             ) {
                                 // Hands' position checker
                                 if (rightHandStretchCoor.current.x !== 0 && rightHandStretchCoor.current.y !== 0) {
-                                    if (poseCopy.right_wrist.x - 35 <= rightHandStretchCoor.current.x &&
-                                        poseCopy.right_wrist.x + 35 >= rightHandStretchCoor.current.x &&
-                                        poseCopy.right_wrist.y - 35 <= rightHandStretchCoor.current.y &&
-                                        poseCopy.right_wrist.y + 35 >= rightHandStretchCoor.current.y
+                                    if (poseCopy.right_wrist.x - 50 <= rightHandStretchCoor.current.x &&
+                                        poseCopy.right_wrist.x + 50 >= rightHandStretchCoor.current.x &&
+                                        poseCopy.right_wrist.y - 50 <= rightHandStretchCoor.current.y &&
+                                        poseCopy.right_wrist.y + 50 >= rightHandStretchCoor.current.y
                                     ) {
                                         console.log("PoseDetect score!!");
                                         // setScore(prevValue => ++prevValue);

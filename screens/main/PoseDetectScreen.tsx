@@ -26,14 +26,16 @@ import MonkeyClimbing from '../../components/Animation/MonkeyClimbing';
 
 // React useContext
 import { ScoreContext } from '../../store/score-context';
+import MarkCounter from '../../components/Timer/MarkCounter';
 
 const PoseDetectScreen: React.FC = () => {
 
     const [finishTime, setFinishTime] = useState(new Date(new Date().valueOf()));
     const [isTimerOn, setIsTimerOn] = useState<boolean>(false);
+    const [isGameStop, setIsGameStop] = useState<boolean>(true);
 
     const [score, setScore] = useState<number>(0);
-    const [scoreReal, setScoreReal] = useState<number>(0);
+    const [scoreReal, setScoreReal] = useState<number>(30);
     const scoreCtx = useContext(ScoreContext);
     // const score = useRef<number>(0);
 
@@ -71,12 +73,14 @@ const PoseDetectScreen: React.FC = () => {
     };
 
     const onStartButtonPressed = () => {
-        setScore(0);
-        setIsCameraOpen(true);
-        // const timerId = setTimeout(() => {
-        setFinishTime(new Date(new Date().valueOf() + 60 * 1000));
-        setIsAppInit(false);
-        // }, 2* 1000);
+        console.log("PoseDetectScreen onStartButtonPressed isGameStop", isGameStop);
+            setScore(0);
+            setScoreReal(0);
+            setIsCameraOpen(true);
+
+            // setFinishTime(new Date(new Date().valueOf() + 60 * 1000));
+            setIsAppInit(false);
+            setIsGameStop(true);
     };
 
     const onTimerClicked = (_isTimerOn: boolean) => {
@@ -92,15 +96,28 @@ const PoseDetectScreen: React.FC = () => {
         }
     };
 
+    const shouldStopGame = (yesOrNo: boolean) => {
+        console.log("PoseDetectScreen shouldStopGame yesOrNo", yesOrNo);
+        setIsGameStop(yesOrNo);
+        if (yesOrNo) {
+            if (!isAppInit) {
+                setNotice(`You have scored ${scoreReal}`);
+                setIsAppInit(true);
+                setIsCameraOpen(false);
+            }
+        }
+    };
+
     useEffect(() => {
         if (score != 0) {
-            if (isTimerOn) {
-                setScoreReal(prevValue => prevValue + 100);
+            console.log("shouldGameStop", isGameStop);
+            if (!isGameStop) {
+                setScoreReal(prevValue => prevValue + 2);
             }
         } else {
             setScoreReal(0);
         }
-    }, [score]);
+    }, [score, isGameStop]);
 
     useEffect(() => {
         if (gameCounter >= 100) {
@@ -111,9 +128,9 @@ const PoseDetectScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <MonkeyClimbing
+            {/* <MonkeyClimbing
                 score={scoreReal}
-            />
+            /> */}
             <View style={{
                 width: "75%",
                 height: "100%",
@@ -151,7 +168,7 @@ const PoseDetectScreen: React.FC = () => {
                     <MainButton
                         onPress={onStartButtonPressed}
                     >
-                        Start
+                        {isGameStop ? "Start" : "Stop"}
                     </MainButton>
                 </View>
                 <PoseDetect
@@ -167,13 +184,18 @@ const PoseDetectScreen: React.FC = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <CountdownTimer
+                    {/* <CountdownTimer
                         finishTime={finishTime}
                         onTimerClicked={onTimerClicked}
+                    /> */}
+                    <MarkCounter
+                        totalMarkToAchieve={30}
+                        currentMark={scoreReal}
+                        shouldGameStop={shouldStopGame}
                     />
-                    <ScorePlate
+                    {/* <ScorePlate
                         score={scoreReal}
-                    />
+                    /> */}
                 </View>
                 {/* <View>
                 <Image
