@@ -35,12 +35,12 @@ const PoseDetectScreen: React.FC = () => {
     const [isGameStop, setIsGameStop] = useState<boolean>(true);
 
     const [score, setScore] = useState<number>(0);
-    const [scoreReal, setScoreReal] = useState<number>(30);
+    const [scoreReal, setScoreReal] = useState<number>(0);
     const scoreCtx = useContext(ScoreContext);
     // const score = useRef<number>(0);
 
     const [notice, setNotice] = useState<string>("");
-    const [isAppInit, setIsAppInit] = useState<boolean>(true);
+    const [isAppInit, setIsAppInit] = useState<boolean>(false);
     const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
     const [gameCounter, setGameCounter] = useState<number>(0);
 
@@ -53,6 +53,7 @@ const PoseDetectScreen: React.FC = () => {
                 text: "OK", onPress: () => {
                     setNotice("");
                     setGameCounter(prevValue => ++prevValue);
+                    scoreCtx.setScreen(0);
                 }
             }]);
         }
@@ -74,13 +75,13 @@ const PoseDetectScreen: React.FC = () => {
 
     const onStartButtonPressed = () => {
         console.log("PoseDetectScreen onStartButtonPressed isGameStop", isGameStop);
-            setScore(0);
-            setScoreReal(0);
-            setIsCameraOpen(true);
+        setScore(0);
+        setScoreReal(0);
+        setIsCameraOpen(true);
 
-            // setFinishTime(new Date(new Date().valueOf() + 60 * 1000));
-            setIsAppInit(false);
-            setIsGameStop(true);
+        // setFinishTime(new Date(new Date().valueOf() + 60 * 1000));
+        setIsAppInit(false);
+        setIsGameStop(true);
     };
 
     const onTimerClicked = (_isTimerOn: boolean) => {
@@ -101,7 +102,7 @@ const PoseDetectScreen: React.FC = () => {
         setIsGameStop(yesOrNo);
         if (yesOrNo) {
             if (!isAppInit) {
-                setNotice(`You have scored ${scoreReal}`);
+                setNotice(`此部分動作完成`);
                 setIsAppInit(true);
                 setIsCameraOpen(false);
             }
@@ -145,14 +146,8 @@ const PoseDetectScreen: React.FC = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <MainButton
-                        onPress={() => {
-                            scoreCtx.setScreen(0);
-                        }}
-                    >
-                        Back
-                    </MainButton>
-                    <MainButton
+
+                    {/* <MainButton
                         onPress={() => {
                             setWhichCamera((prevValue) => {
                                 if (prevValue === CameraType.front) {
@@ -164,17 +159,28 @@ const PoseDetectScreen: React.FC = () => {
                         }}
                     >
                         Switch
-                    </MainButton>
+                    </MainButton> */}
                     <MainButton
-                        onPress={onStartButtonPressed}
+                        onPress={() => {
+                            scoreCtx.setScreen(0);
+                        }}
                     >
-                        {isGameStop ? "Start" : "Stop"}
+                        返回
                     </MainButton>
+                    <Text>肩膊 - 打橫舉至盡（幅度練習）</Text>
+                    <MarkCounter
+                        totalMarkToAchieve={30}
+                        currentMark={scoreReal}
+                        shouldGameStop={shouldStopGame}
+                        isOn={!isAppInit}
+                    />
+                    <View style={{ width: 75 }} />
                 </View>
                 <PoseDetect
                     onPoseDetected={onPoseDetected}
                     onScoreUpdate={onScoreUpdate}
                     whichCamera={whichCamera}
+                    isOn={!isAppInit}
                 />
                 <View
                     style={{
@@ -188,11 +194,11 @@ const PoseDetectScreen: React.FC = () => {
                         finishTime={finishTime}
                         onTimerClicked={onTimerClicked}
                     /> */}
-                    <MarkCounter
-                        totalMarkToAchieve={30}
-                        currentMark={scoreReal}
-                        shouldGameStop={shouldStopGame}
-                    />
+                    <MainButton
+                        onPress={onStartButtonPressed}
+                    >
+                        {isGameStop ? "Start" : "Stop"}
+                    </MainButton>
                     {/* <ScorePlate
                         score={scoreReal}
                     /> */}
@@ -222,7 +228,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: Constants.statusBarHeight,
-        backgroundColor: 'yellow',
+        // backgroundColor: 'yellow',
     },
 });
 

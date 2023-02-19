@@ -88,10 +88,12 @@ const PoseDetect: React.FC<{
     onPoseDetected: (pose: Pose) => void,
     onScoreUpdate: (score: number) => void
     whichCamera: CameraType
+    isOn?: boolean
 }> = ({
     onPoseDetected,
     onScoreUpdate,
-    whichCamera
+    whichCamera,
+    isOn = true,
 }) => {
 
         //performance hacks (Platform dependent)
@@ -247,18 +249,22 @@ const PoseDetect: React.FC<{
                                         poseCopy.right_wrist.y - 50 <= rightHandStretchCoor.current.y &&
                                         poseCopy.right_wrist.y + 50 >= rightHandStretchCoor.current.y
                                     ) {
-                                        console.log("PoseDetect score!!");
-                                        // setScore(prevValue => ++prevValue);
-                                        onScoreUpdate(1);
-                                        // scoreCtx.addScore(1);
-                                        // score.current = score.current + 1;
-                                        setStretchStage(prevValue => {
-                                            if (prevValue <= 2) {
-                                                return ++prevValue;
-                                            } else {
-                                                return 0;
-                                            }
-                                        });
+                                        if (isOn) {
+                                            console.log("PoseDetect score!!");
+                                            // setScore(prevValue => ++prevValue);
+                                            onScoreUpdate(1);
+                                            // scoreCtx.addScore(1);
+                                            // score.current = score.current + 1;
+                                            setStretchStage(prevValue => {
+                                                if (prevValue <= 2) {
+                                                    return ++prevValue;
+                                                } else {
+                                                    return 0;
+                                                }
+                                            });
+                                        } else {
+                                            setStretchStage(0);
+                                        }
                                     }
                                 }
                             }
@@ -304,13 +310,17 @@ const PoseDetect: React.FC<{
             // }
         }
 
+        useEffect(() => {
+            setStretchStage(0);
+        }, [isOn]);
+
 
         return (
             <View style={styles.body}>
                 {useMemo(() => <TFCamera
                     getPrediction={getPrediction}
                     whichCamera={whichCamera}
-                />, [whichCamera])}
+                />, [whichCamera, isOn])}
                 <View style={styles.svgView}>
                     <Svg
                         height={cameraHeight}

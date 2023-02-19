@@ -12,10 +12,12 @@ const MarkCounter: React.FC<{
     totalMarkToAchieve: number;
     currentMark: number;
     shouldGameStop: (yesOrNo: boolean) => void
+    isOn?: boolean
 }> = ({
     totalMarkToAchieve,
     currentMark,
     shouldGameStop,
+    isOn = true
 }) => {
 
         const _totalMarkToAchieve = useMemo(() => totalMarkToAchieve, [totalMarkToAchieve]);
@@ -26,11 +28,16 @@ const MarkCounter: React.FC<{
             console.log("_totalMarkToAchieve", _totalMarkToAchieve);
             console.log("_currentMark", _currentMark);
 
-            if (_totalMarkToAchieve <= _currentMark) {
-                shouldGameStop(true);
+            if (_totalMarkToAchieve !== 0){
+                if (_totalMarkToAchieve <= _currentMark) {
+                    shouldGameStop(true);
+                } else {
+                    shouldGameStop(false);
+                }
             } else {
                 shouldGameStop(false);
             }
+
 
         }, [_totalMarkToAchieve, _currentMark]);
 
@@ -40,7 +47,7 @@ const MarkCounter: React.FC<{
                     fontSize: 30,
                 }}
             >
-                {`分數: ${_currentMark}`}
+                {`分數: ${Math.floor(_currentMark / 6)}/5`}
             </Text>
         </View>);
     };

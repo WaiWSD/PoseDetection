@@ -38,14 +38,17 @@ const WelcomeScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <View>
+            <View style={{
+                   height: "80%",
+            }}>
                 <Image
                     source={require('../../assets/road.png')}
                     style={{
                         // width: "100%",
-                        height: 150,
-                        resizeMode: 'stretch',
-                        backgroundColor: 'green',
+                        // width: 300,
+                        flexShrink: 1,
+                        resizeMode: 'contain',
+                        // backgroundColor: 'green',
                     }}
                 />
             </View>
@@ -62,11 +65,11 @@ const WelcomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        width: '100%',
+        // width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: Constants.statusBarHeight,
-        backgroundColor: 'yellow',
+        // backgroundColor: 'yellow',
     },
 });
 
