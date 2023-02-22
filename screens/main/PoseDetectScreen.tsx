@@ -33,6 +33,7 @@ const PoseDetectScreen: React.FC = () => {
     const [finishTime, setFinishTime] = useState(new Date(new Date().valueOf()));
     const [isTimerOn, setIsTimerOn] = useState<boolean>(false);
     const [isGameStop, setIsGameStop] = useState<boolean>(true);
+    const [isCalibrating, setIsCalibrating] = useState<boolean>(true);
 
     const [score, setScore] = useState<number>(0);
     const [scoreReal, setScoreReal] = useState<number>(0);
@@ -66,7 +67,11 @@ const PoseDetectScreen: React.FC = () => {
     const onScoreUpdate = (tempScore: number) => {
         console.log('PoseDetectScreen onScoreUpdate score', tempScore);
 
-        setScore(prevValue => tempScore + prevValue);
+        if (tempScore === 0) {
+            setIsCalibrating(false);
+        } else {
+            setScore(prevValue => 1 + prevValue);
+        }
 
         // const tempOriginalScore = score.current;
         // console.log('PoseDetectScreen onScoreUpdate tempOriginalScore', score);
@@ -167,7 +172,11 @@ const PoseDetectScreen: React.FC = () => {
                     >
                         返回
                     </MainButton>
-                    <Text>肩膊 - 打橫舉至盡（幅度練習）</Text>
+                    {isCalibrating ?
+                        <Text>{"肩膊 - 打橫舉至盡\n請站在畫面中間"}</Text>
+                        :
+                        <Text>肩膊 - 打橫舉至盡（幅度練習）</Text>
+                    }
                     <MarkCounter
                         totalMarkToAchieve={30}
                         currentMark={scoreReal}

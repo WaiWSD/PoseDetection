@@ -56,13 +56,19 @@ const StretchSvgFrame: React.FC<{ onHandsCoorUpdate: (coor: { left: Coor, right:
         console.log("StretchSvgFrame useEffect stretchStage", stretchStage);
         if (stretchStage === 0) {
             setLeftCoor(
+                { x: cameraWidth * 0.4, y: cameraHeight * 0.3 }
+            )
+            setRightCoor(
+                { x: cameraWidth * 0.6, y: cameraHeight * 0.3 }
+            )
+        } else if (stretchStage === 1) {
+            setLeftCoor(
                 { x: cameraWidth * 0.4, y: cameraHeight * 0.7 }
             )
             setRightCoor(
                 { x: cameraWidth * 0.6, y: cameraHeight * 0.7 }
             )
-        }
-        else if (stretchStage === 1) {
+        } else if (stretchStage === 2) {
             setLeftCoor(
                 { x: cameraWidth * 0.33, y: cameraHeight * 0.63 }
             )

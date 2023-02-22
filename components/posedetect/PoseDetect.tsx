@@ -250,16 +250,17 @@ const PoseDetect: React.FC<{
                                         poseCopy.right_wrist.y + 50 >= rightHandStretchCoor.current.y
                                     ) {
                                         if (isOn) {
-                                            console.log("PoseDetect score!!");
+                                            console.log("PoseDetect score!!", stretchStage);
                                             // setScore(prevValue => ++prevValue);
                                             onScoreUpdate(1);
                                             // scoreCtx.addScore(1);
                                             // score.current = score.current + 1;
                                             setStretchStage(prevValue => {
+                                                // onScoreUpdate(prevValue);
                                                 if (prevValue <= 2) {
                                                     return ++prevValue;
                                                 } else {
-                                                    return 0;
+                                                    return 1;
                                                 }
                                             });
                                         } else {
@@ -311,7 +312,9 @@ const PoseDetect: React.FC<{
         }
 
         useEffect(() => {
-            setStretchStage(0);
+            if (!isOn) {
+                setStretchStage(0);
+            }
         }, [isOn]);
 
 

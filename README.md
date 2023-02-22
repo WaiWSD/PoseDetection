@@ -96,3 +96,4 @@ eas build --platform ios
 0.2.0 - Fixed the memory leakage when looping the camera video
 0.3.0 - Enabling the landscape only mode
 0.4.0 - Monkey animation has been added
+0.5.0 - 0.5.1 - Stretch exercise

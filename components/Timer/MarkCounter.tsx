@@ -22,7 +22,7 @@ const MarkCounter: React.FC<{
 
         const _totalMarkToAchieve = useMemo(() => totalMarkToAchieve, [totalMarkToAchieve]);
 
-        const _currentMark = useMemo(() => currentMark, [currentMark]);
+        const _currentMark = useMemo(() => currentMark - 1, [currentMark]);
 
         useEffect(() => {
             console.log("_totalMarkToAchieve", _totalMarkToAchieve);
