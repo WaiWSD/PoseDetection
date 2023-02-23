@@ -84,6 +84,9 @@ const cameraHeight = Platform.OS === "ios" ?
 // const cameraWidth = 350;
 // const cameraHeight = 400;
 
+// sensitivity
+const sensitivity = 30;
+
 const PoseDetect: React.FC<{
     onPoseDetected: (pose: Pose) => void,
     onScoreUpdate: (score: number) => void
@@ -237,17 +240,17 @@ const PoseDetect: React.FC<{
 
                         // Hands' position checker
                         if (leftHandStretchCoor.current.x !== 0 && leftHandStretchCoor.current.y !== 0) {
-                            if (poseCopy.left_wrist.x - 50 <= leftHandStretchCoor.current.x &&
-                                poseCopy.left_wrist.x + 50 >= leftHandStretchCoor.current.x &&
-                                poseCopy.left_wrist.y - 50 <= leftHandStretchCoor.current.y &&
-                                poseCopy.left_wrist.y + 50 >= leftHandStretchCoor.current.y
+                            if (poseCopy.left_wrist.x - sensitivity <= leftHandStretchCoor.current.x &&
+                                poseCopy.left_wrist.x + sensitivity >= leftHandStretchCoor.current.x &&
+                                poseCopy.left_wrist.y - sensitivity <= leftHandStretchCoor.current.y &&
+                                poseCopy.left_wrist.y + sensitivity >= leftHandStretchCoor.current.y
                             ) {
                                 // Hands' position checker
                                 if (rightHandStretchCoor.current.x !== 0 && rightHandStretchCoor.current.y !== 0) {
-                                    if (poseCopy.right_wrist.x - 50 <= rightHandStretchCoor.current.x &&
-                                        poseCopy.right_wrist.x + 50 >= rightHandStretchCoor.current.x &&
-                                        poseCopy.right_wrist.y - 50 <= rightHandStretchCoor.current.y &&
-                                        poseCopy.right_wrist.y + 50 >= rightHandStretchCoor.current.y
+                                    if (poseCopy.right_wrist.x - sensitivity <= rightHandStretchCoor.current.x &&
+                                        poseCopy.right_wrist.x + sensitivity >= rightHandStretchCoor.current.x &&
+                                        poseCopy.right_wrist.y - sensitivity <= rightHandStretchCoor.current.y &&
+                                        poseCopy.right_wrist.y + sensitivity >= rightHandStretchCoor.current.y
                                     ) {
                                         if (isOn) {
                                             console.log("PoseDetect score!!", stretchStage);
