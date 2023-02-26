@@ -45,6 +45,7 @@ const MarkCounter: React.FC<{
             <Text
                 style={{
                     fontSize: 30,
+                    color: 'white',
                 }}
             >
                 {`分數: ${Math.floor(_currentMark / 6)}/5`}

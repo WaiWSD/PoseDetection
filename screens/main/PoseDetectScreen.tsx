@@ -137,22 +137,18 @@ const PoseDetectScreen: React.FC = () => {
             {/* <MonkeyClimbing
                 score={scoreReal}
             /> */}
-            <View style={{
-                width: "75%",
-                height: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-            }}>
-                <View
-                    style={{
-                        width: '100%',
-                        flexDirection: 'row',
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                    }}
-                >
+            <View
+                style={{
+                    width: '100%',
+                    // height: '20%',
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    backgroundColor: '#598e61',
+                }}
+            >
 
-                    {/* <MainButton
+                {/* <MainButton
                         onPress={() => {
                             setWhichCamera((prevValue) => {
                                 if (prevValue === CameraType.front) {
@@ -165,26 +161,36 @@ const PoseDetectScreen: React.FC = () => {
                     >
                         Switch
                     </MainButton> */}
-                    <MainButton
-                        onPress={() => {
-                            scoreCtx.setScreen(0);
-                        }}
-                    >
-                        返回
-                    </MainButton>
-                    {isCalibrating ?
-                        <Text>{"肩膊 - 打橫舉至盡\n請站在畫面中間"}</Text>
-                        :
-                        <Text>肩膊 - 打橫舉至盡（幅度練習）</Text>
-                    }
-                    <MarkCounter
-                        totalMarkToAchieve={30}
-                        currentMark={scoreReal}
-                        shouldGameStop={shouldStopGame}
-                        isOn={!isAppInit}
-                    />
-                    <View style={{ width: 75 }} />
-                </View>
+                <MainButton
+                    onPress={() => {
+                        scoreCtx.setScreen(0);
+                    }}
+                >
+                    {"<"}
+                </MainButton>
+                {isCalibrating ?
+                    <Text style={{
+                        color: 'white',
+                    }}>{"肩膊 - 打橫舉至盡\n請站在畫面中間"}</Text>
+                    :
+                    <Text style={{
+                        color: 'white',
+                    }}>肩膊 - 打橫舉至盡（幅度練習）</Text>
+                }
+                <MarkCounter
+                    totalMarkToAchieve={30}
+                    currentMark={scoreReal}
+                    shouldGameStop={shouldStopGame}
+                    isOn={!isAppInit}
+                />
+                <View style={{ width: 75 }} />
+            </View>
+            <View style={{
+                width: "75%",
+                // height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+            }}>
                 <PoseDetect
                     onPoseDetected={onPoseDetected}
                     onScoreUpdate={onScoreUpdate}
@@ -231,7 +237,7 @@ const PoseDetectScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: 'row',
+        // flexDirection: 'row',
         flex: 1,
         width: '100%',
         justifyContent: 'center',
