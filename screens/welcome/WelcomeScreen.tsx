@@ -25,10 +25,6 @@ import CountdownTimer from '../../components/Timer/CountdownTimer';
 // React useContext
 import { ScoreContext } from '../../store/score-context';
 
-// camera size in imaginary pixel
-const cameraWidth = Math.round(Dimensions.get('window').width * 0.9);
-const cameraHeight = Math.round(Dimensions.get('window').height * 0.6);
-
 const WelcomeScreen: React.FC = () => {
     const scoreCtx = useContext(ScoreContext);
 
