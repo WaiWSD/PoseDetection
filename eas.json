@@ -13,10 +13,12 @@
         "buildType": "apk"
       },
       "distribution": "internal",
-      "credentialsSource": "local"
+      "credentialsSource": "local",
+      "channel": "preview"
     },
     "production": {
-      "credentialsSource": "local"
+      "credentialsSource": "local",
+      "channel": "production"
     }
   },
   "submit": {

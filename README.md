@@ -97,3 +97,4 @@ eas build --platform ios
 0.3.0 - Enabling the landscape only mode
 0.4.0 - Monkey animation has been added
 0.5.0 - 0.5.2 - Stretch exercise
+0.6.0 - EAS update is installed
