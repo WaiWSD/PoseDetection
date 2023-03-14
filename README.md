@@ -90,6 +90,13 @@ Finally you may build a ips file for testing:
 eas build --platform ios
 ```
 
+# To update through EAS
+
+eas update --branch prod-1.4.0  
+eas channel:edit prod-1.4.0 --branch prod-1.4.0
+eas channel:edit production --branch prod-1.4.0
+eas build --profile production
+
 # Version
 
 0.1.1 - A functional Game with refactored Tensorflow JS module
