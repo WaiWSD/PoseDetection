@@ -93,8 +93,8 @@ const StretchSvgFrame: React.FC<{ onHandsCoorUpdate: (coor: { left: Coor, right:
 
     return (
         <View style={styles.appleSvgView}>
-            {stretchStage === 0 && <Animated.View style={{ left: "32%", bottom: 0, position: 'absolute' }}>
-                <Svg width="170" height="240" viewBox="0 0 615 896" fill="none">
+            {stretchStage === 0 && <Animated.View style={{ left: "28%", bottom: 0, position: 'absolute' }}>
+                <Svg width={cameraWidth * 0.5} height={cameraHeight * 0.7} viewBox="0 0 615 896" fill="none">
                     <Circle cx="313.5" cy="106.5" r="91.5" stroke="black" strokeWidth="30" />
                     <Path d="M502 278.457C338.229 223.711 284.83 220.015 115.827 278.457M115.827 278.457C77.2327 447.973 17 712.53 17 712.53M115.827 278.457L17 712.53M17 712.53C17 712.53 43.9244 751.07 80.1164 740.003L17 712.53Z" stroke="black" strokeWidth="30" />
                     <Path d="M113 278.457C276.771 223.711 330.17 220.015 499.173 278.457M499.173 278.457C537.767 447.973 598 712.53 598 712.53M499.173 278.457L598 712.53M598 712.53C598 712.53 571.076 751.07 534.884 740.003L598 712.53Z" stroke="black" strokeWidth="30" />
